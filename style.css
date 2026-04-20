@@ -1,0 +1,26 @@
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #f2f2f2;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(5, 80px);
+  gap: 5px;
+  justify-content: center;
+  margin: 20px;
+}
+
+.cell {
+  background: white;
+  border: 1px solid black;
+  height: 80px;
+  font-size: 12px;
+  padding: 5px;
+}
+
+.player {
+  color: red;
+  font-weight: bold;
+}
