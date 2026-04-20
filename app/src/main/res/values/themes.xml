@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MonopolyUkraine" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/blue_ua</item>
+        <item name="colorPrimaryVariant">@color/blue_ua</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/gold</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+    </style>
+
+    <style name="GameDialog" parent="Theme.MaterialComponents.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_bg</item>
+        <item name="colorPrimary">@color/gold</item>
+        <item name="colorOnSurface">@color/text</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogPositiveButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogNegativeButton</item>
+    </style>
+
+    <style name="DialogPositiveButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/gold</item>
+    </style>
+
+    <style name="DialogNegativeButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/muted</item>
+    </style>
+</resources>
