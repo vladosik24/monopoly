@@ -6,494 +6,146 @@
 <title>Монополія Україна</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#005BBB">
-<script>
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/monopoly/sw.js');
-  }
-</script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Geologica:wght@300;400;600&display=swap');
-
   :root {
-    --gold: #F4C542;
-    --blue: #005BBB;
-    --yellow: #FFD700;
-    --red: #D62B2B;
-    --green: #2E7D32;
-    --bg: #0a0f1e;
-    --card: #111827;
-    --border: #1e3a5f;
-    --text: #e8eaf6;
-    --muted: #6b7a99;
+    --gold: #F4C542; --blue: #005BBB; --yellow: #FFD700;
+    --red: #D62B2B; --green: #2E7D32; --bg: #0a0f1e;
+    --card: #111827; --border: #1e3a5f; --text: #e8eaf6; --muted: #6b7a99;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .screen { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+  .screen.active { display: flex; }
 
-  body {
-    font-family: 'Geologica', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-image: 
-      radial-gradient(ellipse at 20% 20%, rgba(0,91,187,0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(244,197,66,0.1) 0%, transparent 50%);
-  }
+  /* LOBBY */
+  .logo-big { font-size: 64px; margin-bottom: 8px; }
+  h1 { font-size: 28px; color: var(--gold); font-weight: 900; text-align: center; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 40px; text-align: center; }
+  .card-box { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; width: 100%; max-width: 400px; margin-bottom: 16px; }
+  .card-box h3 { color: var(--gold); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+  input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px; outline: none; margin-bottom: 10px; }
+  input:focus { border-color: var(--gold); }
+  .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; }
+  .btn-blue { background: linear-gradient(135deg, var(--blue), #0073e6); color: white; }
+  .btn-green { background: linear-gradient(135deg, var(--green), #1b5e20); color: white; }
+  .btn-gray { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+  .btn:hover { transform: translateY(-2px); opacity: 0.9; }
 
-  h1, h2, h3 { font-family: 'Unbounded', sans-serif; }
+  /* WAITING */
+  .room-code { font-size: 48px; font-weight: 900; color: var(--gold); letter-spacing: 8px; text-align: center; margin: 20px 0; }
+  .players-list { width: 100%; max-width: 400px; }
+  .player-item { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; }
+  .player-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .player-item-name { font-size: 15px; }
+  .player-item-host { font-size: 11px; color: var(--gold); margin-left: auto; }
+  .waiting-text { color: var(--muted); font-size: 14px; text-align: center; margin: 16px 0; animation: blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  .screen { display: none; min-height: 100vh; }
-  .screen.active { display: flex; flex-direction: column; }
-
-  #startScreen {
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .flag-stripe {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, var(--blue) 50%, var(--yellow) 50%);
-  }
-
-  .trident-bg {
-    position: absolute;
-    font-size: 300px;
-    opacity: 0.03;
-    user-select: none;
-    animation: pulse 4s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-
-  .start-content {
-    text-align: center;
-    z-index: 1;
-    width: 100%;
-    max-width: 420px;
-  }
-
-  .logo {
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  .logo-icon {
-    font-size: 48px;
-    filter: drop-shadow(0 0 20px rgba(244,197,66,0.6));
-    animation: float 3s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-
-  .logo h1 {
-    font-size: clamp(22px, 6vw, 32px);
-    background: linear-gradient(135deg, var(--gold), #fff, var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.1;
-    text-align: left;
-  }
-
-  .subtitle {
-    color: var(--muted);
-    font-size: 13px;
-    margin-bottom: 40px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .player-setup {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 24px;
-  }
-
-  .player-setup h3 {
-    font-size: 13px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-
-  .player-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .player-avatar {
-    font-size: 28px;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.05);
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    cursor: pointer;
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-
-  .player-avatar:hover { border-color: var(--gold); transform: scale(1.1); }
-
-  .player-name-input {
-    flex: 1;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    color: var(--text);
-    font-family: 'Geologica', sans-serif;
-    font-size: 15px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .player-name-input:focus { border-color: var(--gold); }
-
-  .player-color {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .btn-primary {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--blue), #0073e6);
-    border: none;
-    border-radius: 14px;
-    color: white;
-    font-family: 'Unbounded', sans-serif;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-  }
-
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,91,187,0.4); }
-  .btn-primary:active { transform: translateY(0); }
-
-  #gameScreen { padding: 0; }
-
-  .game-header {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .game-title { font-family: 'Unbounded', sans-serif; font-size: 14px; color: var(--gold); }
+  /* GAME */
+  #gameScreen { padding: 0; align-items: stretch; justify-content: flex-start; }
+  .game-header { background: var(--card); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .game-title { font-size: 14px; font-weight: 900; color: var(--gold); }
   .bank-display { font-size: 12px; color: var(--muted); }
-  .bank-display span { color: var(--green); font-weight: 600; }
+  .bank-display span { color: var(--green); font-weight: 700; }
 
-  .board-container { padding: 8px; overflow: auto; flex: 1; }
-
-  .board {
-    display: grid;
-    grid-template-columns: repeat(11, 1fr);
-    grid-template-rows: repeat(11, 1fr);
-    gap: 2px;
-    width: 100%;
-    aspect-ratio: 1;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  .cell {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2px;
-    position: relative;
-    cursor: pointer;
-    transition: all 0.15s;
-    overflow: hidden;
-  }
-
-  .cell:hover { border-color: var(--gold); z-index: 2; }
+  .board-container { padding: 6px; flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; }
+  .board { display: grid; grid-template-columns: repeat(11,1fr); grid-template-rows: repeat(11,1fr); gap: 2px; width: 100%; aspect-ratio: 1; max-width: 480px; }
+  .cell { background: var(--card); border: 1px solid var(--border); border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1px; position: relative; overflow: hidden; cursor: pointer; }
   .cell.corner { background: rgba(244,197,66,0.08); border-color: rgba(244,197,66,0.3); }
+  .cell.center { grid-column:2/11; grid-row:2/11; background: rgba(0,91,187,0.05); border: 2px solid rgba(0,91,187,0.2); border-radius: 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .cell-bar { width:100%; height:4px; flex-shrink:0; }
+  .cell-icon { font-size: 9px; }
+  .cell-name { font-size: 4.5px; text-align:center; color: var(--text); line-height:1.2; padding:0 1px; }
+  .cell-price { font-size: 4px; color: var(--gold); }
+  .player-token { position:absolute; font-size:8px; width:11px; height:11px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.4); z-index:3; pointer-events:none; }
+  .owned-dot { position:absolute; bottom:1px; right:1px; width:5px; height:5px; border-radius:50%; }
 
-  .cell.center {
-    grid-column: 2 / 11;
-    grid-row: 2 / 11;
-    background: rgba(0,91,187,0.05);
-    border: 2px solid rgba(0,91,187,0.2);
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+  .game-panel { background: var(--card); border-top: 1px solid var(--border); padding: 10px 14px; flex-shrink: 0; }
+  .log-area { height: 44px; overflow-y: auto; font-size: 11px; color: var(--muted); margin-bottom: 8px; display:flex; flex-direction:column-reverse; }
+  .log-entry.hl { color: var(--gold); }
+  .log-entry.ok { color: #4caf50; }
+  .log-entry.err { color: var(--red); }
 
-  .cell-color-bar { width: 100%; height: 5px; border-radius: 2px 2px 0 0; flex-shrink: 0; }
-  .cell-name { font-size: 5px; text-align: center; line-height: 1.2; color: var(--text); word-break: break-word; padding: 1px; }
-  .cell-price { font-size: 5px; color: var(--gold); font-weight: 600; }
-  .cell-icon { font-size: 10px; }
+  .players-bar { display:flex; gap:6px; overflow-x:auto; margin-bottom:8px; scrollbar-width:none; }
+  .player-chip { background: rgba(255,255,255,0.04); border: 2px solid var(--border); border-radius: 10px; padding: 6px 10px; min-width: 100px; flex-shrink:0; }
+  .player-chip.active { border-color: var(--gold); background: rgba(244,197,66,0.07); }
+  .player-chip.bankrupt { opacity:0.35; border-color: var(--red); }
+  .chip-top { display:flex; align-items:center; gap:5px; margin-bottom:3px; }
+  .chip-name { font-size:11px; font-weight:700; }
+  .chip-money { font-size:13px; font-weight:900; color: var(--gold); }
+  .chip-pos { font-size:9px; color: var(--muted); }
 
-  .player-token {
-    position: absolute;
-    font-size: 9px;
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(255,255,255,0.3);
-    z-index: 3;
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    pointer-events: none;
-  }
+  .action-row { display:flex; gap:8px; align-items:center; }
+  .dice-box { display:flex; gap:5px; }
+  .die { width:34px; height:34px; background:white; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:20px; color:#111; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+  .btn-roll { flex:1; padding:12px; background:linear-gradient(135deg,var(--blue),#003d82); border:none; border-radius:12px; color:white; font-size:13px; font-weight:700; cursor:pointer; }
+  .btn-roll:disabled { opacity:0.35; cursor:not-allowed; }
+  .my-turn-badge { background: var(--gold); color: #000; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-align:center; margin-bottom:6px; display:none; }
+  .my-turn-badge.show { display:block; }
 
-  .owned-indicator {
-    position: absolute;
-    bottom: 1px; right: 1px;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.5);
-  }
+  /* MODALS */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:100; align-items:flex-end; justify-content:center; padding:16px; backdrop-filter:blur(4px); }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--card); border:1px solid var(--border); border-radius:24px 24px 16px 16px; padding:22px; width:100%; max-width:460px; }
+  .modal-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .modal-ico { font-size:32px; }
+  .modal-title { font-size:16px; font-weight:900; color:var(--gold); }
+  .modal-sub { font-size:12px; color:var(--muted); }
+  .prop-stats { background:rgba(255,255,255,0.04); border-radius:10px; padding:12px; margin:10px 0; }
+  .ps-row { display:flex; justify-content:space-between; font-size:13px; padding:3px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .ps-row:last-child { border-bottom:none; }
+  .ps-label { color:var(--muted); }
+  .ps-val { font-weight:700; color:var(--gold); }
+  .modal-btns { display:flex; gap:8px; margin-top:14px; }
+  .mbtn-buy { flex:2; padding:13px; background:linear-gradient(135deg,var(--green),#1b5e20); border:none; border-radius:10px; color:white; font-weight:700; cursor:pointer; }
+  .mbtn-skip { flex:1; padding:13px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; color:var(--muted); cursor:pointer; }
+  .mbtn-ok { width:100%; padding:13px; background:linear-gradient(135deg,var(--blue),#003d82); border:none; border-radius:10px; color:white; font-weight:700; cursor:pointer; margin-top:12px; }
 
-  .center-logo { font-size: clamp(24px, 6vw, 60px); margin-bottom: 4px; }
-  .center-title { font-family: 'Unbounded', sans-serif; font-size: clamp(8px, 2vw, 16px); color: var(--gold); text-align: center; line-height: 1.3; }
-
-  .game-panel {
-    background: var(--card);
-    border-top: 1px solid var(--border);
-    padding: 12px 16px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-  }
-
-  .players-bar { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; }
-
-  .player-chip {
-    background: rgba(255,255,255,0.05);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 8px 12px;
-    min-width: 120px;
-    flex-shrink: 0;
-    transition: all 0.2s;
-  }
-
-  .player-chip.active { border-color: var(--gold); background: rgba(244,197,66,0.08); box-shadow: 0 0 12px rgba(244,197,66,0.2); }
-  .player-chip.bankrupt { opacity: 0.4; border-color: var(--red); }
-
-  .chip-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-  .chip-avatar { font-size: 16px; }
-  .chip-name { font-size: 12px; font-weight: 600; }
-  .chip-money { font-size: 14px; font-family: 'Unbounded', sans-serif; color: var(--gold); }
-  .chip-pos { font-size: 10px; color: var(--muted); }
-
-  .action-area { display: flex; gap: 8px; align-items: center; }
-
-  .btn-dice {
-    flex: 1;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--blue), #003d82);
-    border: 2px solid rgba(0,91,187,0.5);
-    border-radius: 14px;
-    color: white;
-    font-family: 'Unbounded', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .btn-dice:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,91,187,0.4); }
-  .btn-dice:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .dice-display { display: flex; gap: 6px; }
-
-  .die {
-    width: 36px; height: 36px;
-    background: white;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: #111;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    animation: rollDie 0.4s ease-out;
-    font-family: 'Unbounded', sans-serif;
-    font-weight: 900;
-  }
-
-  @keyframes rollDie {
-    0% { transform: rotate(0deg) scale(0.5); opacity: 0; }
-    60% { transform: rotate(20deg) scale(1.2); }
-    100% { transform: rotate(0deg) scale(1); opacity: 1; }
-  }
-
-  .log-area {
-    height: 50px;
-    overflow-y: auto;
-    margin-bottom: 10px;
-    font-size: 12px;
-    color: var(--muted);
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 2px;
-  }
-
-  .log-entry { padding: 2px 0; }
-  .log-entry.highlight { color: var(--gold); }
-  .log-entry.danger { color: var(--red); }
-  .log-entry.success { color: #4caf50; }
-
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    z-index: 100;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 16px;
-    backdrop-filter: blur(4px);
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 24px 24px 16px 16px;
-    padding: 24px;
-    width: 100%;
-    max-width: 480px;
-    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes slideUp {
-    from { transform: translateY(100px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .modal-icon { font-size: 36px; }
-  .modal-title { font-family: 'Unbounded', sans-serif; font-size: 16px; color: var(--gold); margin-bottom: 2px; }
-  .modal-subtitle { font-size: 12px; color: var(--muted); }
-
-  .property-card-preview { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 14px; margin: 12px 0; }
-
-  .prop-stat { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .prop-stat:last-child { border-bottom: none; }
-  .prop-stat .label { color: var(--muted); }
-  .prop-stat .value { font-weight: 600; }
-  .prop-stat .value.money { color: var(--gold); }
-
-  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
-
-  .btn-buy {
-    flex: 2; padding: 14px;
-    background: linear-gradient(135deg, var(--green), #1b5e20);
-    border: none; border-radius: 12px;
-    color: white; font-family: 'Unbounded', sans-serif;
-    font-size: 13px; cursor: pointer; transition: all 0.2s;
-  }
-
-  .btn-skip {
-    flex: 1; padding: 14px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border); border-radius: 12px;
-    color: var(--muted); cursor: pointer; transition: all 0.2s;
-  }
-
-  .btn-skip:hover { border-color: var(--red); color: var(--red); }
-
-  .btn-ok {
-    width: 100%; padding: 14px;
-    background: linear-gradient(135deg, var(--blue), #003d82);
-    border: none; border-radius: 12px;
-    color: white; font-family: 'Unbounded', sans-serif;
-    font-size: 14px; cursor: pointer; margin-top: 12px;
-  }
-
-  #winScreen { align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
-
-  .win-emoji { font-size: 80px; animation: bounce 0.6s ease infinite alternate; }
-
-  @keyframes bounce {
-    from { transform: translateY(0) scale(1); }
-    to { transform: translateY(-20px) scale(1.1); }
-  }
-
-  .win-title {
-    font-size: clamp(28px, 8vw, 48px);
-    background: linear-gradient(135deg, var(--gold), #fff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 20px 0 8px;
-  }
-
-  .win-subtitle { color: var(--muted); font-size: 16px; margin-bottom: 40px; }
-
-  .end-stats {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 20px;
-    width: 100%; max-width: 380px;
-    margin: 0 auto 32px;
-  }
-
-  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-  .stat-row:last-child { border-bottom: none; }
-  .scrollable { max-height: 40vh; overflow-y: auto; }
+  /* WIN */
+  #winScreen { text-align:center; }
+  .win-emoji { font-size:80px; animation: bounce 0.6s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-16px)} }
+  .win-title { font-size:32px; font-weight:900; color:var(--gold); margin:16px 0 8px; }
+  .win-sub { color:var(--muted); margin-bottom:32px; }
+  .end-stats { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; width:100%; max-width:360px; margin:0 auto 24px; }
+  .stat-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; }
+  .stat-row:last-child { border-bottom:none; }
 </style>
 </head>
 <body>
 
-<div id="startScreen" class="screen active">
-  <div class="flag-stripe"></div>
-  <div class="trident-bg">🔱</div>
-  <div class="start-content">
-    <div class="logo">
-      <div class="logo-icon">🏛️</div>
-      <h1>МОНОПОЛІЯ<br>УКРАЇНА</h1>
-    </div>
-    <p class="subtitle">Від Карпат до Азовського моря</p>
-    <div class="player-setup">
-      <h3>Гравці (2–4)</h3>
-      <div id="playerRows"></div>
-    </div>
-    <button class="btn-primary" onclick="startGame()">🎲 ПОЧАТИ ГРУ</button>
+<!-- LOBBY -->
+<div id="lobbyScreen" class="screen active">
+  <div class="logo-big">🏛️</div>
+  <h1>МОНОПОЛІЯ УКРАЇНА</h1>
+  <p class="sub">Онлайн мультиплеєр</p>
+
+  <div class="card-box">
+    <h3>Ваше ім'я</h3>
+    <input id="myName" placeholder="Введіть ім'я..." maxlength="16"/>
+    <button class="btn btn-green" onclick="createRoom()">🏠 Створити кімнату</button>
+  </div>
+
+  <div class="card-box">
+    <h3>Приєднатись</h3>
+    <input id="roomCodeInput" placeholder="Код кімнати (4 цифри)" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:6px"/>
+    <button class="btn btn-blue" onclick="joinRoom()">🚪 Увійти</button>
   </div>
 </div>
 
+<!-- WAITING -->
+<div id="waitScreen" class="screen">
+  <div class="logo-big">🎲</div>
+  <h1>Кімната</h1>
+  <div class="room-code" id="displayCode">----</div>
+  <p class="sub">Поділіться кодом з друзями</p>
+  <div class="players-list" id="waitingPlayers"></div>
+  <p class="waiting-text" id="waitingText">Очікування гравців...</p>
+  <button class="btn btn-green" id="startBtn" style="max-width:400px;display:none" onclick="hostStartGame()">▶ ПОЧАТИ ГРУ</button>
+  <button class="btn btn-gray" style="max-width:400px;margin-top:8px" onclick="leaveRoom()">← Вийти</button>
+</div>
+
+<!-- GAME -->
 <div id="gameScreen" class="screen">
   <div class="game-header">
     <div class="game-title">🇺🇦 МОНОПОЛІЯ</div>
@@ -504,208 +156,491 @@
   </div>
   <div class="game-panel">
     <div class="log-area" id="logArea"></div>
+    <div class="my-turn-badge" id="myTurnBadge">🎲 ВАШ ХІД!</div>
     <div class="players-bar" id="playersBar"></div>
-    <div class="action-area">
-      <div class="dice-display" id="diceDisplay">
+    <div class="action-row">
+      <div class="dice-box" id="diceDisplay">
         <div class="die">🎲</div>
         <div class="die">🎲</div>
       </div>
-      <button class="btn-dice" id="rollBtn" onclick="rollDice()">🎲 КИНУТИ</button>
+      <button class="btn-roll" id="rollBtn" onclick="rollDice()" disabled>🎲 КИНУТИ</button>
     </div>
   </div>
 </div>
 
+<!-- WIN -->
 <div id="winScreen" class="screen">
   <div class="win-emoji" id="winEmoji">🏆</div>
-  <h1 class="win-title" id="winTitle">ПЕРЕМОГА!</h1>
-  <p class="win-subtitle" id="winSubtitle"></p>
-  <div class="end-stats scrollable" id="endStats"></div>
-  <button class="btn-primary" onclick="resetGame()" style="max-width:380px;width:100%">🔄 НОВА ГРА</button>
+  <div class="win-title" id="winTitle">ПЕРЕМОГА!</div>
+  <div class="win-sub" id="winSub"></div>
+  <div class="end-stats" id="endStats"></div>
+  <button class="btn btn-blue" style="max-width:360px" onclick="backToLobby()">🔄 НОВА ГРА</button>
 </div>
 
-<div class="modal-overlay" id="propertyModal">
+<!-- MODALS -->
+<div class="modal-overlay" id="buyModal">
   <div class="modal">
-    <div class="modal-header">
-      <div class="modal-icon" id="propIcon">🏙️</div>
-      <div>
-        <div class="modal-title" id="propName"></div>
-        <div class="modal-subtitle" id="propGroup"></div>
-      </div>
+    <div class="modal-head">
+      <div class="modal-ico" id="bIcon"></div>
+      <div><div class="modal-title" id="bName"></div><div class="modal-sub" id="bGroup"></div></div>
     </div>
-    <div class="property-card-preview">
-      <div class="prop-stat"><span class="label">Ціна</span><span class="value money" id="propPrice"></span></div>
-      <div class="prop-stat"><span class="label">Оренда</span><span class="value money" id="propRent"></span></div>
-      <div class="prop-stat"><span class="label">З будинком</span><span class="value money" id="propRentH1"></span></div>
-      <div class="prop-stat"><span class="label">З готелем</span><span class="value money" id="propRentHotel"></span></div>
-      <div class="prop-stat"><span class="label">Будинок</span><span class="value money" id="propHousePrice"></span></div>
+    <div class="prop-stats">
+      <div class="ps-row"><span class="ps-label">Ціна</span><span class="ps-val" id="bPrice"></span></div>
+      <div class="ps-row"><span class="ps-label">Оренда</span><span class="ps-val" id="bRent"></span></div>
+      <div class="ps-row"><span class="ps-label">З готелем</span><span class="ps-val" id="bHotel"></span></div>
+      <div class="ps-row"><span class="ps-label">Будинок</span><span class="ps-val" id="bHouse"></span></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-buy" id="buyBtn">💰 КУПИТИ</button>
-      <button class="btn-skip" onclick="closeModal('propertyModal')">Пропустити</button>
+    <div class="modal-btns">
+      <button class="mbtn-buy" id="confirmBuy">💰 КУПИТИ</button>
+      <button class="mbtn-skip" onclick="sendAction({type:'skip_buy'})">Пропустити</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="eventModal">
   <div class="modal">
-    <div class="modal-header">
-      <div class="modal-icon" id="eventIcon">📋</div>
-      <div>
-        <div class="modal-title" id="eventTitle"></div>
-        <div class="modal-subtitle" id="eventSubtitle"></div>
-      </div>
+    <div class="modal-head">
+      <div class="modal-ico" id="evIcon"></div>
+      <div><div class="modal-title" id="evTitle"></div></div>
     </div>
-    <div class="property-card-preview" id="eventBody"></div>
-    <button class="btn-ok" onclick="closeModal('eventModal')">ОК</button>
+    <div style="padding:12px 0;font-size:14px" id="evText"></div>
+    <div style="font-size:24px;font-weight:900;color:var(--gold);text-align:center" id="evAmount"></div>
+    <button class="mbtn-ok" onclick="closeEventModal()">ОК</button>
   </div>
 </div>
 
-<div class="modal-overlay" id="rentModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-icon">💸</div>
-      <div>
-        <div class="modal-title" id="rentTitle">Оренда!</div>
-        <div class="modal-subtitle" id="rentSubtitle"></div>
-      </div>
-    </div>
-    <div class="property-card-preview" id="rentBody"></div>
-    <button class="btn-ok" onclick="closeModal('rentModal')">Сплатити</button>
-  </div>
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-<div class="modal-overlay" id="taxModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-icon">🏛️</div>
-      <div>
-        <div class="modal-title" id="taxTitle">Податок</div>
-        <div class="modal-subtitle" id="taxSubtitle"></div>
-      </div>
-    </div>
-    <button class="btn-ok" onclick="closeModal('taxModal')">Сплатити</button>
-  </div>
-</div>
+const firebaseConfig = {
+  apiKey: "AIzaSyBQNVeXBCqQi5eKhfjAQTJivwKzT9gXT0k",
+  authDomain: "monopoly-fc387.firebaseapp.com",
+  databaseURL: "https://monopoly-fc387-default-rtdb.firebaseio.com",
+  projectId: "monopoly-fc387",
+  storageBucket: "monopoly-fc387.firebasestorage.app",
+  messagingSenderId: "748860996691",
+  appId: "1:748860996691:web:731de9e774cee122991aa6"
+};
 
-<script>
-const BOARD = [
-  {id:0,  type:'corner',   name:'СТАРТ',           icon:'🏁', pos:[11,1]},
-  {id:1,  type:'property', name:'Кривий Ріг',       group:0, price:600,  rent:[20,100,300,450,625,750],    housePrice:500,  icon:'⛏️', pos:[11,2]},
-  {id:2,  type:'chest',    name:'Скарбниця',        icon:'📦', pos:[11,3]},
-  {id:3,  type:'property', name:'Запоріжжя',        group:0, price:600,  rent:[40,200,600,900,1100,1250],  housePrice:500,  icon:'⚡', pos:[11,4]},
-  {id:4,  type:'tax',      name:'Мито',             amount:200, icon:'📋', pos:[11,5]},
-  {id:5,  type:'station',  name:'Укрзалізниця',     icon:'🚂', price:2000, rent:[250,500,1000,2000], pos:[11,6]},
-  {id:6,  type:'property', name:'Дніпро',           group:1, price:1000, rent:[60,300,900,1600,2500,3500], housePrice:1000, icon:'🌊', pos:[11,7]},
-  {id:7,  type:'chance',   name:'Шанс',             icon:'❓', pos:[11,8]},
-  {id:8,  type:'property', name:'Миколаїв',         group:1, price:1000, rent:[60,300,900,1600,2500,3500], housePrice:1000, icon:'⚓', pos:[11,9]},
-  {id:9,  type:'property', name:'Херсон',           group:1, price:1200, rent:[80,400,1000,1800,3000,4500],housePrice:1000, icon:'🌻', pos:[11,10]},
-  {id:10, type:'corner',   name:'ВЯЗНИЦЯ',          icon:'⛓️', pos:[11,11]},
-  {id:11, type:'property', name:'Харків',           group:2, price:1400, rent:[100,500,1500,2200,3600,5000],housePrice:1500,icon:'🏭', pos:[10,11]},
-  {id:12, type:'utility',  name:'Укртелеком',       icon:'📡', price:1500, pos:[9,11]},
-  {id:13, type:'property', name:'Полтава',          group:2, price:1400, rent:[100,500,1500,2200,3600,5000],housePrice:1500,icon:'🎭', pos:[8,11]},
-  {id:14, type:'property', name:'Суми',             group:2, price:1600, rent:[120,600,1800,2600,4000,5500],housePrice:1500,icon:'🌲', pos:[7,11]},
-  {id:15, type:'station',  name:'Аеропорт Бориспіль',icon:'✈️',price:2000,rent:[250,500,1000,2000], pos:[6,11]},
-  {id:16, type:'property', name:'Чернігів',         group:3, price:1800, rent:[140,700,2000,3000,4500,6250],housePrice:2000,icon:'⛪', pos:[5,11]},
-  {id:17, type:'chest',    name:'Скарбниця',        icon:'📦', pos:[4,11]},
-  {id:18, type:'property', name:'Житомир',          group:3, price:1800, rent:[140,700,2000,3000,4500,6250],housePrice:2000,icon:'🌿', pos:[3,11]},
-  {id:19, type:'property', name:'Вінниця',          group:3, price:2000, rent:[160,800,2200,3300,5000,7000],housePrice:2000,icon:'💦', pos:[2,11]},
-  {id:20, type:'corner',   name:'ПАРКІНГ',          icon:'🅿️', pos:[1,11]},
-  {id:21, type:'property', name:'Хмельницький',     group:4, price:2200, rent:[180,900,2500,4000,5500,7500],housePrice:2500,icon:'🏰', pos:[1,10]},
-  {id:22, type:'chance',   name:'Шанс',             icon:'❓', pos:[1,9]},
-  {id:23, type:'property', name:'Рівне',            group:4, price:2200, rent:[180,900,2500,4000,5500,7500],housePrice:2500,icon:'💎', pos:[1,8]},
-  {id:24, type:'property', name:'Луцьк',            group:4, price:2400, rent:[200,1000,3000,4500,6000,8000],housePrice:2500,icon:'🦁', pos:[1,7]},
-  {id:25, type:'station',  name:'Морський порт',    icon:'🚢', price:2000, rent:[250,500,1000,2000], pos:[1,6]},
-  {id:26, type:'property', name:'Тернопіль',        group:5, price:2600, rent:[220,1100,3300,5000,7000,9000],housePrice:3000,icon:'🏔️', pos:[1,5]},
-  {id:27, type:'property', name:'Чернівці',         group:5, price:2600, rent:[220,1100,3300,5000,7000,9000],housePrice:3000,icon:'🌺', pos:[1,4]},
-  {id:28, type:'utility',  name:'Нафтогаз',         icon:'⛽', price:1500, pos:[1,3]},
-  {id:29, type:'property', name:'Ужгород',          group:5, price:2800, rent:[240,1200,3600,5500,7500,9500],housePrice:3000,icon:'🏞️', pos:[1,2]},
-  {id:30, type:'corner',   name:'ЙДИ ДО ВЯЗНИЦІ',  icon:'👮', pos:[1,1]},
-  {id:31, type:'property', name:'Одеса',            group:6, price:3000, rent:[260,1300,3900,5750,8000,11000],housePrice:3500,icon:'🌊', pos:[2,1]},
-  {id:32, type:'property', name:'Черкаси',          group:6, price:3000, rent:[260,1300,3900,5750,8000,11000],housePrice:3500,icon:'🌸', pos:[3,1]},
-  {id:33, type:'chest',    name:'Скарбниця',        icon:'📦', pos:[4,1]},
-  {id:34, type:'property', name:'Хортиця',          group:6, price:3200, rent:[280,1500,4500,6250,8750,12500],housePrice:3500,icon:'⚔️', pos:[5,1]},
-  {id:35, type:'station',  name:'Аеропорт Схід',    icon:'🛫', price:2000, rent:[250,500,1000,2000], pos:[6,1]},
-  {id:36, type:'chance',   name:'Шанс',             icon:'❓', pos:[7,1]},
-  {id:37, type:'property', name:'Львів',            group:7, price:3500, rent:[350,1750,5000,7000,9000,12500],housePrice:4000,icon:'🦁', pos:[8,1]},
-  {id:38, type:'tax',      name:'Акциз',            amount:100, icon:'📋', pos:[9,1]},
-  {id:39, type:'property', name:'Київ',             group:7, price:4000, rent:[500,2000,6000,9000,12000,15000],housePrice:4000,icon:'🏛️', pos:[10,1]},
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ── BOARD DATA ────────────────────────────────────────────────────────────────
+const BOARD=[
+  {id:0,type:'corner',name:'СТАРТ',icon:'🏁',pos:[11,1]},
+  {id:1,type:'property',name:'Кривий Ріг',group:0,price:600,rent:[20,100,300,450,625,750],housePrice:500,icon:'⛏️',pos:[11,2]},
+  {id:2,type:'chest',name:'Скарбниця',icon:'📦',pos:[11,3]},
+  {id:3,type:'property',name:'Запоріжжя',group:0,price:600,rent:[40,200,600,900,1100,1250],housePrice:500,icon:'⚡',pos:[11,4]},
+  {id:4,type:'tax',name:'Мито',amount:200,icon:'📋',pos:[11,5]},
+  {id:5,type:'station',name:'Укрзалізниця',icon:'🚂',price:2000,rent:[250,500,1000,2000],pos:[11,6]},
+  {id:6,type:'property',name:'Дніпро',group:1,price:1000,rent:[60,300,900,1600,2500,3500],housePrice:1000,icon:'🌊',pos:[11,7]},
+  {id:7,type:'chance',name:'Шанс',icon:'❓',pos:[11,8]},
+  {id:8,type:'property',name:'Миколаїв',group:1,price:1000,rent:[60,300,900,1600,2500,3500],housePrice:1000,icon:'⚓',pos:[11,9]},
+  {id:9,type:'property',name:'Херсон',group:1,price:1200,rent:[80,400,1000,1800,3000,4500],housePrice:1000,icon:'🌻',pos:[11,10]},
+  {id:10,type:'corner',name:'ВЯЗНИЦЯ',icon:'⛓️',pos:[11,11]},
+  {id:11,type:'property',name:'Харків',group:2,price:1400,rent:[100,500,1500,2200,3600,5000],housePrice:1500,icon:'🏭',pos:[10,11]},
+  {id:12,type:'utility',name:'Укртелеком',icon:'📡',price:1500,pos:[9,11]},
+  {id:13,type:'property',name:'Полтава',group:2,price:1400,rent:[100,500,1500,2200,3600,5000],housePrice:1500,icon:'🎭',pos:[8,11]},
+  {id:14,type:'property',name:'Суми',group:2,price:1600,rent:[120,600,1800,2600,4000,5500],housePrice:1500,icon:'🌲',pos:[7,11]},
+  {id:15,type:'station',name:'Аеропорт Бориспіль',icon:'✈️',price:2000,rent:[250,500,1000,2000],pos:[6,11]},
+  {id:16,type:'property',name:'Чернігів',group:3,price:1800,rent:[140,700,2000,3000,4500,6250],housePrice:2000,icon:'⛪',pos:[5,11]},
+  {id:17,type:'chest',name:'Скарбниця',icon:'📦',pos:[4,11]},
+  {id:18,type:'property',name:'Житомир',group:3,price:1800,rent:[140,700,2000,3000,4500,6250],housePrice:2000,icon:'🌿',pos:[3,11]},
+  {id:19,type:'property',name:'Вінниця',group:3,price:2000,rent:[160,800,2200,3300,5000,7000],housePrice:2000,icon:'💦',pos:[2,11]},
+  {id:20,type:'corner',name:'ПАРКІНГ',icon:'🅿️',pos:[1,11]},
+  {id:21,type:'property',name:'Хмельницький',group:4,price:2200,rent:[180,900,2500,4000,5500,7500],housePrice:2500,icon:'🏰',pos:[1,10]},
+  {id:22,type:'chance',name:'Шанс',icon:'❓',pos:[1,9]},
+  {id:23,type:'property',name:'Рівне',group:4,price:2200,rent:[180,900,2500,4000,5500,7500],housePrice:2500,icon:'💎',pos:[1,8]},
+  {id:24,type:'property',name:'Луцьк',group:4,price:2400,rent:[200,1000,3000,4500,6000,8000],housePrice:2500,icon:'🦁',pos:[1,7]},
+  {id:25,type:'station',name:'Морський порт',icon:'🚢',price:2000,rent:[250,500,1000,2000],pos:[1,6]},
+  {id:26,type:'property',name:'Тернопіль',group:5,price:2600,rent:[220,1100,3300,5000,7000,9000],housePrice:3000,icon:'🏔️',pos:[1,5]},
+  {id:27,type:'property',name:'Чернівці',group:5,price:2600,rent:[220,1100,3300,5000,7000,9000],housePrice:3000,icon:'🌺',pos:[1,4]},
+  {id:28,type:'utility',name:'Нафтогаз',icon:'⛽',price:1500,pos:[1,3]},
+  {id:29,type:'property',name:'Ужгород',group:5,price:2800,rent:[240,1200,3600,5500,7500,9500],housePrice:3000,icon:'🏞️',pos:[1,2]},
+  {id:30,type:'corner',name:'ЙДИ ДО ВЯЗНИЦІ',icon:'👮',pos:[1,1]},
+  {id:31,type:'property',name:'Одеса',group:6,price:3000,rent:[260,1300,3900,5750,8000,11000],housePrice:3500,icon:'🌊',pos:[2,1]},
+  {id:32,type:'property',name:'Черкаси',group:6,price:3000,rent:[260,1300,3900,5750,8000,11000],housePrice:3500,icon:'🌸',pos:[3,1]},
+  {id:33,type:'chest',name:'Скарбниця',icon:'📦',pos:[4,1]},
+  {id:34,type:'property',name:'Хортиця',group:6,price:3200,rent:[280,1500,4500,6250,8750,12500],housePrice:3500,icon:'⚔️',pos:[5,1]},
+  {id:35,type:'station',name:'Аеропорт Схід',icon:'🛫',price:2000,rent:[250,500,1000,2000],pos:[6,1]},
+  {id:36,type:'chance',name:'Шанс',icon:'❓',pos:[7,1]},
+  {id:37,type:'property',name:'Львів',group:7,price:3500,rent:[350,1750,5000,7000,9000,12500],housePrice:4000,icon:'🦁',pos:[8,1]},
+  {id:38,type:'tax',name:'Акциз',amount:100,icon:'📋',pos:[9,1]},
+  {id:39,type:'property',name:'Київ',group:7,price:4000,rent:[500,2000,6000,9000,12000,15000],housePrice:4000,icon:'🏛️',pos:[10,1]},
 ];
 
-const GROUP_COLORS=['#8B4513','#00CED1','#FF69B4','#FF8C00','#FF0000','#FFD700','#228B22','#00008B'];
-const GROUP_NAMES=['Коричнева','Блакитна','Рожева','Оранжева','Червона','Жовта','Зелена','Синя'];
+const GC=['#8B4513','#00CED1','#FF69B4','#FF8C00','#FF0000','#FFD700','#228B22','#00008B'];
+const GN=['Коричнева','Блакитна','Рожева','Оранжева','Червона','Жовта','Зелена','Синя'];
+const PC=['#e53935','#1e88e5','#43a047','#fb8c00'];
+const AV=['🚀','🦁','🐉','🌟'];
+const DICE_F=['','⚀','⚁','⚂','⚃','⚄','⚅'];
 
-const CHANCE_CARDS=[
-  {text:'Премія від держави! Отримайте ₴2000.',amount:2000,icon:'🎁'},
-  {text:'Штраф. Заплатіть ₴500.',amount:-500,icon:'🚔'},
-  {text:'Йдіть до СТАРТУ! Отримайте ₴2000.',action:'goto',target:0,amount:2000,icon:'🏁'},
-  {text:'Отримайте ₴1000 від кожного гравця.',action:'collect',amount:1000,icon:'🤝'},
-  {text:'Ремонт: ₴400 за кожен будинок.',action:'repair',amount:400,icon:'🔧'},
-  {text:'Виграш у лотерею ₴1500!',amount:1500,icon:'🎰'},
-  {text:'Банк повертає ₴500.',amount:500,icon:'🏦'},
-  {text:'Прямо до вязниці!',action:'jail',icon:'⛓️'},
-  {text:'Відвідали фестиваль. Отримайте ₴300.',amount:300,icon:'🎪'},
-  {text:'Фондовий ринок впав. Заплатіть ₴800.',amount:-800,icon:'📉'},
+const CHANCE=[
+  {text:'Премія від держави! +₴2000',amount:2000,icon:'🎁'},
+  {text:'Штраф. -₴500',amount:-500,icon:'🚔'},
+  {text:'Йдіть до СТАРТУ! +₴2000',action:'goto',target:0,amount:2000,icon:'🏁'},
+  {text:'Отримайте ₴1000 від кожного',action:'collect',amount:1000,icon:'🤝'},
+  {text:'Ремонт: ₴400 за будинок',action:'repair',amount:400,icon:'🔧'},
+  {text:'Лотерея! +₴1500',amount:1500,icon:'🎰'},
+  {text:'Банк повертає ₴500',amount:500,icon:'🏦'},
+  {text:'До вязниці!',action:'jail',icon:'⛓️'},
+];
+const CHEST=[
+  {text:'День народження! ₴200 від кожного',action:'collect',amount:200,icon:'🎂'},
+  {text:'Продали картину. +₴1000',amount:1000,icon:'🎨'},
+  {text:'Лікарня. -₴500',amount:-500,icon:'🏥'},
+  {text:'Повернення податку +₴300',amount:300,icon:'📊'},
+  {text:'Казино! +₴2000',amount:2000,icon:'🃏'},
+  {text:'Штраф. -₴200',amount:-200,icon:'🅿️'},
+  {text:'Спадщина! +₴5000',amount:5000,icon:'🏠'},
+  {text:'Комунальні. -₴800',amount:-800,icon:'💡'},
 ];
 
-const CHEST_CARDS=[
-  {text:'День народження! ₴200 від кожного.',action:'collect',amount:200,icon:'🎂'},
-  {text:'Продали картину. Отримайте ₴1000.',amount:1000,icon:'🎨'},
-  {text:'Лікарня. Заплатіть ₴500.',amount:-500,icon:'🏥'},
-  {text:'Повернення податку ₴300!',amount:300,icon:'📊'},
-  {text:'Виграш в казино — ₴2000!',amount:2000,icon:'🃏'},
-  {text:'Штраф за паркування ₴200.',amount:-200,icon:'🅿️'},
-  {text:'Спадщина ₴5000!',amount:5000,icon:'🏠'},
-  {text:'Комунальні послуги: ₴800.',amount:-800,icon:'💡'},
-  {text:'Стартап вистрілив! Отримайте ₴2500.',amount:2500,icon:'🚀'},
-  {text:'Врожай знищено. Заплатіть ₴600.',amount:-600,icon:'🌾'},
-];
-
-const ALL_AVATARS=['🚀','🦁','🐉','🌟','🎭','🦊','🐺','🦅','🐋','🔥','💎','🌈'];
-const PLAYER_COLORS=['#e53935','#1e88e5','#43a047','#fb8c00'];
-const DEFAULT_NAMES=['Гравець 1','Гравець 2','Гравець 3','Гравець 4'];
-
-let players=[], currentPlayerIdx=0, bankMoney=150000;
-let diceRolled=false, owned={}, houses={}, jailTurns={}, gameActive=false;
-let avatarIdx=[0,1,2,3];
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let myId = 'p_' + Math.random().toString(36).substr(2,8);
+let roomCode = null;
+let isHost = false;
+let myIndex = -1;
+let gameState = null;
+let roomRef = null;
+let unsubscribe = null;
+let pendingBuyCellId = null;
 let chanceIdx=0, chestIdx=0;
 
-function setupPlayerRows(){
-  const c=document.getElementById('playerRows'); c.innerHTML='';
-  for(let i=0;i<4;i++){
-    const row=document.createElement('div'); row.className='player-row';
-    row.innerHTML=`
-      <div class="player-avatar" style="border-color:${PLAYER_COLORS[i]}" onclick="cycleAvatar(${i})" id="avatar${i}">${ALL_AVATARS[i]}</div>
-      <input class="player-name-input" id="name${i}" value="${DEFAULT_NAMES[i]}"/>
-      <div class="player-color" style="background:${PLAYER_COLORS[i]}"></div>`;
-    c.appendChild(row);
+// ── ROOM HELPERS ──────────────────────────────────────────────────────────────
+function genCode(){ return Math.floor(1000+Math.random()*9000).toString(); }
+
+window.createRoom = async function(){
+  const name = document.getElementById('myName').value.trim() || 'Гравець';
+  roomCode = genCode();
+  isHost = true;
+  myIndex = 0;
+  roomRef = ref(db, 'rooms/' + roomCode);
+  await set(roomRef, {
+    host: myId,
+    status: 'waiting',
+    players: { [myId]: { name, avatar: AV[0], color: PC[0], index: 0 } }
+  });
+  showScreen('waitScreen');
+  document.getElementById('displayCode').textContent = roomCode;
+  listenRoom();
+};
+
+window.joinRoom = async function(){
+  const code = document.getElementById('roomCodeInput').value.trim();
+  const name = document.getElementById('myName').value.trim() || 'Гравець';
+  if(!code){ alert('Введіть код кімнати'); return; }
+  roomCode = code;
+  isHost = false;
+  roomRef = ref(db, 'rooms/' + roomCode);
+  const snap = await get(roomRef);
+  if(!snap.exists()){ alert('Кімнату не знайдено!'); return; }
+  const data = snap.val();
+  if(data.status !== 'waiting'){ alert('Гра вже почалась!'); return; }
+  const pCount = Object.keys(data.players||{}).length;
+  if(pCount >= 4){ alert('Кімната повна!'); return; }
+  myIndex = pCount;
+  await update(ref(db, 'rooms/'+roomCode+'/players'), {
+    [myId]: { name, avatar: AV[myIndex], color: PC[myIndex], index: myIndex }
+  });
+  showScreen('waitScreen');
+  document.getElementById('displayCode').textContent = roomCode;
+  listenRoom();
+};
+
+window.leaveRoom = async function(){
+  if(roomRef) await remove(ref(db,'rooms/'+roomCode+'/players/'+myId));
+  if(unsubscribe) unsubscribe();
+  showScreen('lobbyScreen');
+};
+
+window.hostStartGame = async function(){
+  const snap = await get(roomRef);
+  const data = snap.val();
+  const playersArr = Object.values(data.players).sort((a,b)=>a.index-b.index);
+  const gs = initGameState(playersArr);
+  await update(roomRef, { status:'playing', gameState: gs });
+};
+
+function listenRoom(){
+  if(unsubscribe) unsubscribe();
+  const unsub = onValue(roomRef, snap => {
+    if(!snap.exists()) return;
+    const data = snap.val();
+    renderWaitingPlayers(data.players||{});
+    if(data.status === 'playing' && data.gameState){
+      gameState = data.gameState;
+      if(document.getElementById('waitScreen').classList.contains('active')){
+        showScreen('gameScreen');
+        renderBoard();
+      }
+      applyGameState();
+    }
+    if(data.status === 'won') showWin(data.gameState);
+    const pCount = Object.keys(data.players||{}).length;
+    const startBtn = document.getElementById('startBtn');
+    if(isHost && pCount >= 2){
+      startBtn.style.display='block';
+      document.getElementById('waitingText').style.display='none';
+    } else {
+      startBtn.style.display='none';
+    }
+  });
+  unsubscribe = unsub;
+}
+
+function renderWaitingPlayers(players){
+  const list = document.getElementById('waitingPlayers'); list.innerHTML='';
+  Object.values(players).sort((a,b)=>a.index-b.index).forEach(p=>{
+    const div=document.createElement('div'); div.className='player-item';
+    div.innerHTML=`<div class="player-dot" style="background:${p.color}"></div><div class="player-item-name">${p.avatar} ${p.name}</div>${p.index===0?'<div class="player-item-host">Хост</div>':''}`;
+    list.appendChild(div);
+  });
+}
+
+// ── GAME STATE INIT ───────────────────────────────────────────────────────────
+function initGameState(playersArr){
+  return {
+    players: playersArr.map((p,i)=>({
+      name:p.name, avatar:p.avatar, color:p.color,
+      money:15000, pos:0, bankrupt:false, inJail:false, jailTurns:0, index:i
+    })),
+    currentPlayerIdx: 0,
+    bankMoney: 150000,
+    owned: {},
+    houses: {},
+    log: [],
+    chanceIdx: 0,
+    chestIdx: 0,
+    diceRolled: false,
+    gameOver: false,
+    lastDice: [1,1],
+  };
+}
+
+// ── APPLY STATE TO UI ─────────────────────────────────────────────────────────
+function applyGameState(){
+  const gs = gameState;
+  if(!gs) return;
+  document.getElementById('bankDisplay').textContent = '₴'+(gs.bankMoney||0).toLocaleString();
+  renderPlayers(gs);
+  renderOwnedIndicators(gs);
+  renderTokens(gs);
+  updateLog(gs);
+
+  const isMyTurn = gs.players[gs.currentPlayerIdx] && myIndex === gs.currentPlayerIdx;
+  const badge = document.getElementById('myTurnBadge');
+  badge.classList.toggle('show', isMyTurn && !gs.diceRolled);
+
+  const rollBtn = document.getElementById('rollBtn');
+  rollBtn.disabled = !isMyTurn || gs.diceRolled || gs.gameOver;
+
+  if(gs.lastDice){
+    document.getElementById('diceDisplay').innerHTML=
+      `<div class="die">${DICE_F[gs.lastDice[0]]}</div><div class="die">${DICE_F[gs.lastDice[1]]}</div>`;
+  }
+
+  if(gs.gameOver) showWin(gs);
+
+  // Show buy modal if pending for me
+  if(gs.pendingBuy && gs.pendingBuy.playerIdx === myIndex){
+    showBuyModal(gs.pendingBuy.cellId);
+  } else {
+    closeBuyModal();
+  }
+
+  // Show event modal
+  if(gs.pendingEvent && gs.pendingEvent.playerIdx === myIndex){
+    showEvModal(gs.pendingEvent);
   }
 }
 
-function cycleAvatar(i){
-  avatarIdx[i]=(avatarIdx[i]+1)%ALL_AVATARS.length;
-  document.getElementById('avatar'+i).textContent=ALL_AVATARS[avatarIdx[i]];
-}
+// ── DICE ──────────────────────────────────────────────────────────────────────
+window.rollDice = async function(){
+  if(!gameState || gameState.diceRolled) return;
+  const gs = JSON.parse(JSON.stringify(gameState));
+  const d1=Math.ceil(Math.random()*6), d2=Math.ceil(Math.random()*6), total=d1+d2;
+  gs.lastDice=[d1,d2];
+  gs.diceRolled=true;
+  addLogGS(gs, `${gs.players[gs.currentPlayerIdx].avatar} ${gs.players[gs.currentPlayerIdx].name} кинув ${d1}+${d2}=${total}`);
 
-function startGame(){
-  players=[];
-  for(let i=0;i<4;i++){
-    const name=document.getElementById('name'+i).value.trim()||DEFAULT_NAMES[i];
-    players.push({name,money:15000,pos:0,avatar:ALL_AVATARS[avatarIdx[i]],color:PLAYER_COLORS[i],bankrupt:false,inJail:false});
+  const p=gs.players[gs.currentPlayerIdx];
+
+  if(p.inJail){
+    p.jailTurns=(p.jailTurns||0)+1;
+    if(d1===d2){p.inJail=false;p.jailTurns=0;addLogGS(gs,`✅ ${p.name} вийшов з вязниці!`);}
+    else if(p.jailTurns>=3){p.inJail=false;p.jailTurns=0;p.money-=500;gs.bankMoney+=500;addLogGS(gs,`${p.name} заплатив ₴500 за звільнення.`);}
+    else{addLogGS(gs,`${p.name} у вязниці. Спроба ${p.jailTurns}.`);gs.diceRolled=true;await saveGS(gs);setTimeout(()=>endTurnGS(gs),1500);return;}
   }
-  currentPlayerIdx=0; diceRolled=false; owned={}; houses={}; jailTurns={}; bankMoney=150000; gameActive=true; chanceIdx=0; chestIdx=0;
-  showScreen('gameScreen'); renderBoard(); renderPlayers(); renderTokens(); updateBank();
-  addLog('Гра розпочата! Ходить '+players[0].name,'highlight');
+
+  const oldPos=p.pos;
+  const newPos=(oldPos+total)%40;
+  if(newPos<oldPos||(oldPos+total>=40)){p.money+=2000;gs.bankMoney-=2000;addLogGS(gs,`${p.name} пройшов СТАРТ! +₴2000`);}
+  p.pos=newPos;
+  addLogGS(gs,`${p.avatar} ${p.name} → ${BOARD[newPos].name}`);
+
+  await processLanding(gs, gs.currentPlayerIdx, newPos);
+};
+
+async function processLanding(gs, pIdx, pos){
+  const p=gs.players[pIdx];
+  const cell=BOARD[pos];
+
+  if(cell.type==='corner'){
+    if(cell.id===30){p.pos=10;p.inJail=true;p.jailTurns=0;addLogGS(gs,`⛓️ ${p.name} відправлений до вязниці!`);
+      gs.pendingEvent={playerIdx:pIdx,icon:'⛓️',title:'ВЯЗНИЦЯ!',text:`${p.name} відправлений до вязниці!`,amount:''};
+      await saveGS(gs);return;}
+    await endTurnGS(gs);return;
+  }
+
+  if(cell.type==='tax'){
+    p.money-=cell.amount;gs.bankMoney+=cell.amount;
+    addLogGS(gs,`📋 ${p.name} сплатив податок ₴${cell.amount}`);
+    gs.pendingEvent={playerIdx:pIdx,icon:'📋',title:cell.name,text:`Ви сплатили ₴${cell.amount}`,amount:`-₴${cell.amount}`};
+    await saveGS(gs);return;
+  }
+
+  if(cell.type==='chance'||cell.type==='chest'){
+    const deck=cell.type==='chance'?CHANCE:CHEST;
+    const cardIdx=cell.type==='chance'?gs.chanceIdx:gs.chestIdx;
+    const card=deck[cardIdx%deck.length];
+    if(cell.type==='chance')gs.chanceIdx++;else gs.chestIdx++;
+    applyCard(gs,pIdx,card);
+    gs.pendingEvent={playerIdx:pIdx,icon:card.icon,title:cell.type==='chance'?'ШАНС':'СКАРБНИЦЯ',text:card.text,amount:card.amount?(card.amount>0?'+₴'+card.amount:'-₴'+Math.abs(card.amount)):''};
+    await saveGS(gs);return;
+  }
+
+  if(cell.type==='property'||cell.type==='station'||cell.type==='utility'){
+    const ownerIdx=gs.owned[cell.id];
+    if(ownerIdx===undefined||ownerIdx===null){
+      if(p.money>=cell.price){
+        gs.pendingBuy={playerIdx:pIdx,cellId:cell.id};
+        await saveGS(gs);
+      } else {
+        addLogGS(gs,`${p.name} не може купити — мало грошей.`);
+        await endTurnGS(gs);
+      }
+      return;
+    }
+    if(ownerIdx===pIdx){addLogGS(gs,`${p.name} на власній власності.`);await endTurnGS(gs);return;}
+    const owner=gs.players[ownerIdx];
+    if(owner.bankrupt){await endTurnGS(gs);return;}
+    const rent=calcRent(gs,cell,ownerIdx);
+    p.money-=rent;owner.money+=rent;
+    addLogGS(gs,`💸 ${p.name} сплатив ₴${rent} → ${owner.name}`);
+    gs.pendingEvent={playerIdx:pIdx,icon:'💸',title:'Оренда! '+cell.name,text:`${p.name} сплатив оренду ${owner.name}`,amount:`-₴${rent}`};
+    checkBankruptcy(gs,pIdx);
+    await saveGS(gs);return;
+  }
+  await endTurnGS(gs);
 }
 
+function applyCard(gs,pIdx,card){
+  const p=gs.players[pIdx];
+  if(card.action==='jail'){p.pos=10;p.inJail=true;p.jailTurns=0;return;}
+  if(card.action==='goto'){p.pos=card.target;if(card.amount>0){p.money+=card.amount;gs.bankMoney-=card.amount;}return;}
+  if(card.action==='collect'){
+    gs.players.forEach((pl,i)=>{if(i!==pIdx&&!pl.bankrupt){pl.money-=card.amount;p.money+=card.amount;}});return;
+  }
+  if(card.action==='repair'){
+    let total=0;
+    Object.entries(gs.owned||{}).forEach(([id,pi])=>{if(pi===pIdx)total+=(gs.houses[id]||0)*card.amount;});
+    p.money-=total;gs.bankMoney+=total;return;
+  }
+  if(card.amount>0){p.money+=card.amount;gs.bankMoney-=card.amount;}
+  else{p.money-=Math.abs(card.amount);gs.bankMoney+=Math.abs(card.amount);}
+  checkBankruptcy(gs,pIdx);
+}
+
+function calcRent(gs,cell,ownerIdx){
+  if(cell.type==='station'){const cnt=BOARD.filter(b=>b.type==='station'&&gs.owned[b.id]===ownerIdx).length;return cell.rent[Math.min(cnt-1,cell.rent.length-1)];}
+  if(cell.type==='utility'){const cnt=BOARD.filter(b=>b.type==='utility'&&gs.owned[b.id]===ownerIdx).length;return cnt>=2?1200:600;}
+  const h=gs.houses[cell.id]||0;return cell.rent[Math.min(h,cell.rent.length-1)];
+}
+
+function checkBankruptcy(gs,pIdx){
+  const p=gs.players[pIdx];
+  if(p.money<=0){p.bankrupt=true;p.money=0;
+    Object.keys(gs.owned||{}).forEach(id=>{if(gs.owned[id]===pIdx)delete gs.owned[id];});
+    addLogGS(gs,`💀 ${p.name} збанкрутував!`);
+  }
+}
+
+async function endTurnGS(gs){
+  gs.diceRolled=false; gs.pendingBuy=null; gs.pendingEvent=null;
+  const active=gs.players.filter(p=>!p.bankrupt);
+  if(active.length<=1){gs.gameOver=true;await update(roomRef,{status:'won',gameState:gs});return;}
+  do{gs.currentPlayerIdx=(gs.currentPlayerIdx+1)%gs.players.length;}
+  while(gs.players[gs.currentPlayerIdx].bankrupt);
+  addLogGS(gs,`Хід: ${gs.players[gs.currentPlayerIdx].avatar} ${gs.players[gs.currentPlayerIdx].name}`);
+  await saveGS(gs);
+}
+
+async function saveGS(gs){ await update(roomRef,{gameState:gs}); }
+function addLogGS(gs,msg){gs.log=gs.log||[];gs.log.unshift(msg);if(gs.log.length>20)gs.log.pop();}
+
+// ── BUY ──────────────────────────────────────────────────────────────────────
+window.sendAction = async function(action){
+  const gs=JSON.parse(JSON.stringify(gameState));
+  if(action.type==='buy'){
+    const cell=BOARD[action.cellId];
+    const p=gs.players[gs.currentPlayerIdx];
+    p.money-=cell.price;gs.bankMoney+=cell.price;
+    gs.owned[action.cellId]=gs.currentPlayerIdx;
+    addLogGS(gs,`✅ ${p.name} купив ${cell.name} за ₴${cell.price}!`);
+    gs.pendingBuy=null;
+    await endTurnGS(gs);
+  }
+  if(action.type==='skip_buy'){
+    gs.pendingBuy=null;
+    await endTurnGS(gs);
+  }
+  if(action.type==='ack_event'){
+    gs.pendingEvent=null;
+    await endTurnGS(gs);
+  }
+};
+
+function showBuyModal(cellId){
+  const cell=BOARD[cellId];
+  pendingBuyCellId=cellId;
+  document.getElementById('bIcon').textContent=cell.icon;
+  document.getElementById('bName').textContent=cell.name;
+  document.getElementById('bGroup').textContent=cell.type==='property'?GN[cell.group]+' група':cell.type==='station'?'Залізниця/Аеропорт':'Комунальна';
+  document.getElementById('bPrice').textContent='₴'+cell.price;
+  document.getElementById('bRent').textContent=cell.rent?'₴'+cell.rent[0]:'—';
+  document.getElementById('bHotel').textContent=cell.rent&&cell.rent[5]?'₴'+cell.rent[5]:'—';
+  document.getElementById('bHouse').textContent=cell.housePrice?'₴'+cell.housePrice:'—';
+  document.getElementById('confirmBuy').onclick=()=>sendAction({type:'buy',cellId});
+  document.getElementById('buyModal').classList.add('open');
+}
+
+function closeBuyModal(){ document.getElementById('buyModal').classList.remove('open'); }
+
+function showEvModal(ev){
+  document.getElementById('evIcon').textContent=ev.icon;
+  document.getElementById('evTitle').textContent=ev.title;
+  document.getElementById('evText').textContent=ev.text;
+  document.getElementById('evAmount').textContent=ev.amount||'';
+  document.getElementById('eventModal').classList.add('open');
+}
+
+window.closeEventModal = function(){
+  document.getElementById('eventModal').classList.remove('open');
+  if(gameState && gameState.pendingEvent && gameState.pendingEvent.playerIdx===myIndex){
+    sendAction({type:'ack_event'});
+  }
+};
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderBoard(){
   const board=document.getElementById('board'); board.innerHTML='';
   const grid=Array.from({length:11},()=>Array(11).fill(null));
   BOARD.forEach(cell=>{const[r,c]=cell.pos;grid[r-1][c-1]=cell;});
-
   const center=document.createElement('div');
   center.className='cell center';
-  center.innerHTML='<div class="center-logo">🇺🇦</div><div class="center-title">МОНОПОЛІЯ<br>УКРАЇНА</div>';
-
+  center.innerHTML='<div style="font-size:clamp(20px,5vw,48px)">🇺🇦</div><div style="font-size:clamp(7px,1.5vw,14px);color:var(--gold);font-weight:900;text-align:center">МОНОПОЛІЯ<br>УКРАЇНА</div>';
   for(let r=0;r<11;r++){
     for(let c=0;c<11;c++){
       if(r>=1&&r<=9&&c>=1&&c<=9){if(r===1&&c===1)board.appendChild(center);continue;}
@@ -714,235 +649,76 @@ function renderBoard(){
       const el=document.createElement('div');
       el.className='cell'+(cell.type==='corner'?' corner':'');
       el.id='cell-'+cell.id;
-      el.onclick=()=>showCellInfo(cell.id);
-      let bar=cell.type==='property'?`<div class="cell-color-bar" style="background:${GROUP_COLORS[cell.group]}"></div>`:'';
+      let bar=cell.type==='property'?`<div class="cell-bar" style="background:${GC[cell.group]}"></div>`:'';
       el.innerHTML=`${bar}<div class="cell-icon">${cell.icon}</div><div class="cell-name">${cell.name}</div>${cell.price?`<div class="cell-price">₴${cell.price}</div>`:''}`;
       board.appendChild(el);
     }
   }
-  renderOwnedIndicators();
 }
 
-function renderOwnedIndicators(){
-  Object.entries(owned).forEach(([id,pi])=>{
+function renderOwnedIndicators(gs){
+  document.querySelectorAll('.owned-dot').forEach(d=>d.remove());
+  Object.entries(gs.owned||{}).forEach(([id,pi])=>{
     const el=document.getElementById('cell-'+id); if(!el)return;
-    let ind=el.querySelector('.owned-indicator');
-    if(!ind){ind=document.createElement('div');ind.className='owned-indicator';el.appendChild(ind);}
-    ind.style.background=players[pi].color;
+    const dot=document.createElement('div');dot.className='owned-dot';
+    dot.style.background=gs.players[pi]?gs.players[pi].color:'#fff';
+    el.appendChild(dot);
   });
 }
 
-function renderTokens(){
+function renderTokens(gs){
   document.querySelectorAll('.player-token').forEach(t=>t.remove());
-  players.forEach((p,i)=>{
+  const off=[[-4,-4],[4,-4],[-4,4],[4,4]];
+  gs.players.forEach((p,i)=>{
     if(p.bankrupt)return;
     const cellEl=document.getElementById('cell-'+p.pos); if(!cellEl)return;
-    const tok=document.createElement('div');
-    tok.className='player-token'; tok.id='token-'+i; tok.textContent=p.avatar;
-    tok.style.background=p.color;
-    const off=[[-4,-4],[4,-4],[-4,4],[4,4]];
+    const tok=document.createElement('div');tok.className='player-token';
+    tok.textContent=p.avatar;tok.style.background=p.color;
     tok.style.top=`calc(50% + ${off[i%4][1]}px)`;
     tok.style.left=`calc(50% + ${off[i%4][0]}px)`;
     cellEl.appendChild(tok);
   });
 }
 
-function renderPlayers(){
+function renderPlayers(gs){
   const bar=document.getElementById('playersBar'); bar.innerHTML='';
-  players.forEach((p,i)=>{
+  gs.players.forEach((p,i)=>{
     const chip=document.createElement('div');
-    chip.className='player-chip'+(i===currentPlayerIdx?' active':'')+(p.bankrupt?' bankrupt':'');
-    const cell=BOARD.find(b=>b.id===p.pos);
-    chip.innerHTML=`<div class="chip-header"><div class="chip-avatar">${p.avatar}</div><div class="chip-name" style="color:${p.color}">${p.name}</div></div><div class="chip-money">₴${p.money.toLocaleString()}</div><div class="chip-pos">${cell?cell.name:'?'}${p.inJail?' ⛓️':''}</div>`;
+    chip.className='player-chip'+(i===gs.currentPlayerIdx?' active':'')+(p.bankrupt?' bankrupt':'');
+    chip.innerHTML=`<div class="chip-top"><span>${p.avatar}</span><span class="chip-name" style="color:${p.color}">${p.name}${i===myIndex?' (Ви)':''}</span></div><div class="chip-money">₴${(p.money||0).toLocaleString()}</div><div class="chip-pos">${BOARD[p.pos].name}${p.inJail?' ⛓️':''}${p.bankrupt?' 💀':''}</div>`;
     bar.appendChild(chip);
   });
 }
 
-function updateBank(){document.getElementById('bankDisplay').textContent='₴'+bankMoney.toLocaleString();}
-
-function rollDice(){
-  if(diceRolled)return;
-  const p=players[currentPlayerIdx]; if(p.bankrupt){nextTurn();return;}
-  const d1=Math.ceil(Math.random()*6),d2=Math.ceil(Math.random()*6),total=d1+d2;
-  const F=['','⚀','⚁','⚂','⚃','⚄','⚅'];
-  document.getElementById('diceDisplay').innerHTML=`<div class="die">${F[d1]}</div><div class="die">${F[d2]}</div>`;
-  addLog(`${p.avatar} ${p.name} кинув ${d1}+${d2}=${total}`);
-
-  if(p.inJail){
-    jailTurns[currentPlayerIdx]=(jailTurns[currentPlayerIdx]||0)+1;
-    if(d1===d2){p.inJail=false;addLog(`${p.name} вийшов з вязниці!`,'success');}
-    else if(jailTurns[currentPlayerIdx]>=3){p.inJail=false;p.money-=500;bankMoney+=500;addLog(`${p.name} заплатив ₴500 за звільнення.`,'danger');}
-    else{addLog(`${p.name} у вязниці. Спроба ${jailTurns[currentPlayerIdx]}.`,'danger');diceRolled=true;setTimeout(()=>{diceRolled=false;nextTurn();},1200);return;}
-  }
-
-  diceRolled=true;
-  document.getElementById('rollBtn').disabled=true;
-  movePlayer(currentPlayerIdx,total);
+function updateLog(gs){
+  const area=document.getElementById('logArea'); area.innerHTML='';
+  (gs.log||[]).slice(0,5).forEach(msg=>{
+    const e=document.createElement('div');e.className='log-entry';e.textContent=msg;area.appendChild(e);
+  });
 }
 
-function movePlayer(pIdx,steps){
-  const p=players[pIdx];
-  const oldPos=p.pos;
-  const newPos=(oldPos+steps)%40;
-  if(newPos<oldPos||(oldPos+steps>=40)){p.money+=2000;bankMoney-=2000;addLog(`${p.name} пройшов СТАРТ! +₴2000`,'success');}
-  p.pos=newPos; renderTokens(); renderPlayers();
-  setTimeout(()=>landOn(pIdx),600);
-}
-
-function landOn(pIdx){
-  const p=players[pIdx];
-  const cell=BOARD.find(b=>b.id===p.pos); if(!cell){endTurn();return;}
-  addLog(`${p.avatar} ${p.name} → ${cell.name}`);
-
-  if(cell.type==='corner'){
-    if(cell.id===30){p.pos=10;p.inJail=true;jailTurns[pIdx]=0;renderTokens();showEvent('⛓️','ВЯЗНИЦЯ!',`${p.name} відправлений до вязниці!`,'');return;}
-    endTurn();return;
-  }
-  if(cell.type==='tax'){p.money-=cell.amount;bankMoney+=cell.amount;updateBank();renderPlayers();showTax(cell.name,cell.amount,p.name);return;}
-  if(cell.type==='chance'){const card=CHANCE_CARDS[chanceIdx++%CHANCE_CARDS.length];applyCard(card,pIdx,'chance');return;}
-  if(cell.type==='chest'){const card=CHEST_CARDS[chestIdx++%CHEST_CARDS.length];applyCard(card,pIdx,'chest');return;}
-
-  if(cell.type==='property'||cell.type==='station'||cell.type==='utility'){
-    const ownerIdx=owned[cell.id];
-    if(ownerIdx===undefined){
-      if(p.money>=cell.price)showBuyProperty(cell.id,pIdx);
-      else{addLog(`${p.name} не може купити — недостатньо грошей.`,'danger');endTurn();}
-    } else if(ownerIdx===pIdx){addLog(`${p.name} на власній власності.`);endTurn();}
-    else{
-      const owner=players[ownerIdx]; if(owner.bankrupt){endTurn();return;}
-      const rent=calcRent(cell,ownerIdx);
-      p.money-=rent; owner.money+=rent; checkBankruptcy(pIdx); renderPlayers();
-      showRent(cell.name,rent,owner.name,p.name);
-    }
-    return;
-  }
-  endTurn();
-}
-
-function calcRent(cell,ownerIdx){
-  if(cell.type==='station'){const cnt=BOARD.filter(b=>b.type==='station'&&owned[b.id]===ownerIdx).length;return cell.rent[Math.min(cnt-1,cell.rent.length-1)];}
-  if(cell.type==='utility'){const cnt=BOARD.filter(b=>b.type==='utility'&&owned[b.id]===ownerIdx).length;return cnt>=2?1200:600;}
-  const h=houses[cell.id]||0;return cell.rent[Math.min(h,cell.rent.length-1)];
-}
-
-function applyCard(card,pIdx,type){
-  const p=players[pIdx];
-  const title=type==='chance'?'ШАНС':'СКАРБНИЦЯ';
-  if(card.action==='jail'){p.pos=10;p.inJail=true;jailTurns[pIdx]=0;renderTokens();showEvent(card.icon,title,card.text,'');return;}
-  if(card.action==='goto'){p.pos=card.target;if(card.amount){p.money+=card.amount;bankMoney-=card.amount;updateBank();}renderTokens();showEvent(card.icon,title,card.text,`+₴${card.amount}`);return;}
-  if(card.action==='collect'){
-    let total=0;
-    players.forEach((pl,i)=>{if(i!==pIdx&&!pl.bankrupt){pl.money-=card.amount;p.money+=card.amount;total+=card.amount;}});
-    renderPlayers();showEvent(card.icon,title,card.text,`+₴${total}`);return;
-  }
-  if(card.action==='repair'){
-    let total=0;
-    Object.entries(owned).forEach(([id,pi])=>{if(pi===pIdx)total+=(houses[id]||0)*card.amount;});
-    p.money-=total;bankMoney+=total;updateBank();checkBankruptcy(pIdx);renderPlayers();showEvent(card.icon,title,card.text,total>0?`-₴${total}`:'Нема будинків');return;
-  }
-  if(card.amount>0){p.money+=card.amount;bankMoney-=card.amount;}
-  else{p.money+=card.amount;bankMoney-=card.amount;}
-  updateBank();checkBankruptcy(pIdx);renderPlayers();
-  showEvent(card.icon,title,card.text,(card.amount>=0?'+':'')+`₴${card.amount}`);
-}
-
-function showBuyProperty(cellId,pIdx){
-  const cell=BOARD.find(b=>b.id===cellId),p=players[pIdx];
-  document.getElementById('propIcon').textContent=cell.icon;
-  document.getElementById('propName').textContent=cell.name;
-  document.getElementById('propGroup').textContent=cell.type==='property'?GROUP_NAMES[cell.group]+' група':cell.type==='station'?'Залізниця/Аеропорт':'Комунальна';
-  document.getElementById('propPrice').textContent='₴'+cell.price;
-  document.getElementById('propRent').textContent=cell.rent?'₴'+cell.rent[0]:'—';
-  document.getElementById('propRentH1').textContent=cell.rent&&cell.rent[1]?'₴'+cell.rent[1]:'—';
-  document.getElementById('propRentHotel').textContent=cell.rent&&cell.rent[5]?'₴'+cell.rent[5]:'—';
-  document.getElementById('propHousePrice').textContent=cell.housePrice?'₴'+cell.housePrice:'—';
-  document.getElementById('buyBtn').onclick=()=>{
-    p.money-=cell.price;bankMoney+=cell.price;owned[cellId]=pIdx;
-    updateBank();renderOwnedIndicators();renderPlayers();
-    addLog(`${p.name} купив ${cell.name} за ₴${cell.price}!`,'success');
-    closeModal('propertyModal');
-  };
-  document.querySelector('#propertyModal .btn-skip').onclick=()=>closeModal('propertyModal');
-  openModal('propertyModal');
-}
-
-function showCellInfo(cellId){
-  if(!gameActive)return;
-}
-
-function showEvent(icon,title,text,detail){
-  document.getElementById('eventIcon').textContent=icon;
-  document.getElementById('eventTitle').textContent=title;
-  document.getElementById('eventSubtitle').textContent='';
-  document.getElementById('eventBody').innerHTML=`<div style="text-align:center;padding:8px"><div style="font-size:15px;margin-bottom:8px">${text}</div>${detail?`<div style="font-size:22px;font-family:'Unbounded',sans-serif;color:var(--gold)">${detail}</div>`:''}</div>`;
-  document.getElementById('eventModal').querySelector('.btn-ok').onclick=()=>closeModal('eventModal');
-  openModal('eventModal');
-}
-
-function showRent(cellName,rent,ownerName,payerName){
-  document.getElementById('rentTitle').textContent='Оренда: '+cellName;
-  document.getElementById('rentSubtitle').textContent='Власник: '+ownerName;
-  document.getElementById('rentBody').innerHTML=`<div style="text-align:center;padding:8px"><div style="font-size:13px;color:var(--muted);margin-bottom:8px">${payerName} сплачує оренду</div><div style="font-size:28px;font-family:'Unbounded',sans-serif;color:var(--red)">-₴${rent}</div></div>`;
-  document.getElementById('rentModal').querySelector('.btn-ok').onclick=()=>closeModal('rentModal');
-  openModal('rentModal');
-}
-
-function showTax(name,amount,pName){
-  document.getElementById('taxTitle').textContent=name;
-  document.getElementById('taxSubtitle').textContent=`${pName} сплачує ₴${amount}`;
-  renderPlayers();openModal('taxModal');
-}
-
-function endTurn(){
-  diceRolled=false;
-  document.getElementById('rollBtn').disabled=false;
-  const active=players.filter(p=>!p.bankrupt);
-  if(active.length<=1){showWin(active[0]);return;}
-  nextTurn();
-}
-
-function nextTurn(){
-  do{currentPlayerIdx=(currentPlayerIdx+1)%players.length;}
-  while(players[currentPlayerIdx].bankrupt);
-  diceRolled=false;
-  document.getElementById('rollBtn').disabled=false;
-  renderPlayers();
-  addLog(`Хід: ${players[currentPlayerIdx].avatar} ${players[currentPlayerIdx].name}`,'highlight');
-}
-
-function checkBankruptcy(pIdx){
-  const p=players[pIdx];
-  if(p.money<0){
-    p.bankrupt=true;p.money=0;
-    Object.keys(owned).forEach(id=>{if(owned[id]===pIdx)delete owned[id];});
-    addLog(`💀 ${p.name} збанкрутував!`,'danger');
-    renderOwnedIndicators();
-  }
-}
-
-function showWin(winner){
-  gameActive=false;
-  if(!winner)winner=players.reduce((a,b)=>a.money>b.money?a:b);
+function showWin(gs){
+  const active=gs.players.filter(p=>!p.bankrupt);
+  const winner=active.length>0?active[0]:gs.players.reduce((a,b)=>a.money>b.money?a:b);
   document.getElementById('winEmoji').textContent=winner.avatar;
   document.getElementById('winTitle').textContent=winner.name+' перемагає!';
-  document.getElementById('winSubtitle').textContent='Переможець Монополії України! 🇺🇦';
-  const sorted=[...players].sort((a,b)=>b.money-a.money);
+  document.getElementById('winSub').textContent='Переможець Монополії України! 🇺🇦';
+  const sorted=[...gs.players].sort((a,b)=>b.money-a.money);
   document.getElementById('endStats').innerHTML=sorted.map((p,i)=>`<div class="stat-row"><span>${['🥇','🥈','🥉','4️⃣'][i]} ${p.avatar} ${p.name}</span><span style="color:${i===0?'var(--gold)':'var(--text)'}">₴${p.money.toLocaleString()}</span></div>`).join('');
   showScreen('winScreen');
 }
 
-function resetGame(){showScreen('startScreen');}
+window.backToLobby = function(){ showScreen('lobbyScreen'); };
 
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');endTurn();}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function addLog(msg,cls=''){
-  const log=document.getElementById('logArea');
-  const e=document.createElement('div');e.className='log-entry'+(cls?' '+cls:'');e.textContent=msg;
-  log.prepend(e);while(log.children.length>20)log.removeChild(log.lastChild);
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-setupPlayerRows();
+// Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/monopoly/sw.js');
+}
 </script>
 </body>
 </html>
