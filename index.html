@@ -9,20 +9,40 @@
 <style>
 :root{
   --gold:#F4C542;--blue:#005BBB;--red:#D62B2B;--green:#2E7D32;
-  --bg:#0a0f1e;--card:#111827;--border:#1e3a5f;--text:#e8eaf6;--muted:#6b7a99;
-  --accent:#F4C542;
+  --bg:#0a0f1e;--card:#111827;--border:#1e3a5f;--text:#e8eaf6;--muted:#6b7a99;--accent:#F4C542;
 }
-.theme-dark{--bg:#0a0f1e;--card:#111827;--border:#1e3a5f;}
-.theme-light{--bg:#f0f4ff;--card:#ffffff;--border:#c5d0e8;--text:#1a2340;--muted:#6b7a99;}
-.theme-green{--bg:#0a1a0f;--card:#0f2318;--border:#1a4a2a;--accent:#4caf50;}
-.theme-red{--bg:#1a0a0a;--card:#2a1010;--border:#4a1a1a;--accent:#e53935;}
-.theme-purple{--bg:#0f0a1e;--card:#1a1030;--border:#2d1f5e;--accent:#9c27b0;}
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background 0.3s,color 0.3s;}
-
 .screen{display:none;min-height:100vh;flex-direction:column;}
 .screen.active{display:flex;}
+
+/* SETUP */
+#setupScreen{align-items:center;justify-content:center;padding:24px;}
+.logo-wrap{text-align:center;margin-bottom:28px;}
+.logo-emoji{font-size:68px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.logo-title{font-size:26px;font-weight:900;color:var(--gold);}
+.logo-sub{font-size:12px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+.box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;width:100%;max-width:400px;margin-bottom:14px;}
+.box-title{font-size:11px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;font-weight:700;}
+input{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none;margin-bottom:10px;}
+input:focus{border-color:var(--accent);}
+.avatar-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.av-btn{font-size:22px;width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.av-btn.sel{border-color:var(--accent);background:rgba(244,197,66,0.15);transform:scale(1.15);}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-bottom:8px;}
+.btn-blue{background:linear-gradient(135deg,var(--blue),#0073e6);color:#fff;}
+.btn-green{background:linear-gradient(135deg,var(--green),#1b5e20);color:#fff;}
+.btn-gray{background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid var(--border);}
+.btn:active{transform:scale(0.97);}
+
+/* APP */
+#appScreen{padding:0;}
+.app-header{background:var(--card);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.hdr-av{font-size:26px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:2px solid var(--accent);}
+.hdr-name{font-size:14px;font-weight:700;flex:1;}
+.hdr-info{font-size:11px;color:var(--muted);}
+.hdr-pts{font-size:13px;font-weight:900;color:var(--gold);}
 
 /* TABS */
 .tab-bar{display:flex;background:var(--card);border-top:1px solid var(--border);position:fixed;bottom:0;left:0;right:0;z-index:50;padding-bottom:env(safe-area-inset-bottom);}
@@ -31,44 +51,19 @@ body{font-family:sans-serif;background:var(--bg);color:var(--text);min-height:10
 .tab-btn.active{color:var(--accent);}
 .tab-content{flex:1;overflow-y:auto;padding:16px;padding-bottom:80px;}
 
-/* AUTH */
-#authScreen{align-items:center;justify-content:center;padding:24px;text-align:center;}
-.auth-logo{font-size:72px;animation:float 3s ease-in-out infinite;margin-bottom:12px;}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.auth-title{font-size:28px;font-weight:900;color:var(--gold);margin-bottom:6px;}
-.auth-sub{color:var(--muted);font-size:13px;margin-bottom:40px;}
-.btn-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:340px;padding:16px;background:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;color:#1a1a1a;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:all 0.2s;}
-.btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,0.4);}
-.btn-google img{width:24px;height:24px;}
-.btn-skip{margin-top:12px;background:transparent;border:1px solid var(--border);border-radius:12px;padding:12px;width:100%;max-width:340px;color:var(--muted);font-size:14px;cursor:pointer;}
-
-/* MAIN APP */
-#appScreen{padding:0;}
-.app-header{background:var(--card);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.hdr-avatar{font-size:28px;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:2px solid var(--accent);}
-.hdr-name{font-size:15px;font-weight:700;flex:1;}
-.hdr-league{font-size:11px;color:var(--muted);}
-.hdr-pts{font-size:13px;font-weight:900;color:var(--gold);}
-
-/* HOME TAB */
-.home-banner{background:linear-gradient(135deg,var(--blue),#003d82);border-radius:18px;padding:20px;margin-bottom:16px;text-align:center;}
+/* HOME */
+.home-banner{background:linear-gradient(135deg,#003d82,var(--blue));border-radius:18px;padding:20px;margin-bottom:16px;text-align:center;}
 .hb-flag{font-size:36px;margin-bottom:6px;}
 .hb-title{font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;}
 .hb-sub{font-size:12px;color:rgba(255,255,255,0.7);}
 .quick-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
-.qs-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
-.qs-val{font-size:22px;font-weight:900;color:var(--accent);}
-.qs-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
-.section-title{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
-.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-bottom:8px;}
-.btn-blue{background:linear-gradient(135deg,var(--blue),#0073e6);color:#fff;}
-.btn-green{background:linear-gradient(135deg,var(--green),#1b5e20);color:#fff;}
-.btn-gold{background:linear-gradient(135deg,#b8860b,var(--gold));color:#000;}
-.btn-gray{background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid var(--border);}
-.btn:active{transform:scale(0.97);}
+.qs{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
+.qs-v{font-size:22px;font-weight:900;color:var(--accent);}
+.qs-l{font-size:10px;color:var(--muted);margin-top:2px;}
+.section-title{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;margin-top:4px;}
 
-/* ROOMS TAB */
-.rooms-actions{display:flex;gap:8px;margin-bottom:14px;}
+/* ROOMS */
+.rooms-top{display:flex;gap:8px;margin-bottom:14px;}
 .btn-sm{flex:1;padding:11px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;}
 .btn-sm-blue{background:linear-gradient(135deg,var(--blue),#0073e6);color:#fff;}
 .btn-sm-green{background:linear-gradient(135deg,var(--green),#1b5e20);color:#fff;}
@@ -88,27 +83,26 @@ body{font-family:sans-serif;background:var(--bg);color:var(--text);min-height:10
 .no-rooms{text-align:center;color:var(--muted);padding:40px 16px;font-size:14px;}
 
 /* CREATE MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:flex-end;justify-content:center;padding:12px;backdrop-filter:blur(6px);}
-.modal-overlay.open{display:flex;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:flex-end;justify-content:center;padding:12px;backdrop-filter:blur(6px);}
+.overlay.open{display:flex;}
 .modal{background:var(--card);border:1px solid var(--border);border-radius:22px 22px 14px 14px;padding:22px;width:100%;max-width:460px;animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
 .modal-title{font-size:17px;font-weight:900;color:var(--accent);margin-bottom:16px;}
 label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;margin-top:12px;}
-input,select{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none;}
-input:focus,select:focus{border-color:var(--accent);}
+select{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none;-webkit-appearance:none;}
 select option{background:#1a2340;}
 .max-picker{display:flex;gap:8px;margin-top:4px;}
-.mp{flex:1;padding:11px;border:2px solid var(--border);border-radius:10px;background:transparent;color:var(--text);font-size:16px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.15s;}
-.mp.sel{border-color:var(--accent);background:rgba(244,197,66,0.12);color:var(--accent);}
+.mp{flex:1;padding:12px;border:2px solid var(--border);border-radius:10px;background:transparent;color:var(--text);font-size:18px;font-weight:900;cursor:pointer;text-align:center;transition:all 0.15s;}
+.mp.sel{border-color:var(--accent);background:rgba(244,197,66,0.15);color:var(--accent);}
 .modal-btns{display:flex;gap:8px;margin-top:16px;}
 .mbtn{flex:1;padding:13px;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px;}
-.mbtn-primary{background:linear-gradient(135deg,var(--green),#1b5e20);color:#fff;}
+.mbtn-ok{background:linear-gradient(135deg,var(--green),#1b5e20);color:#fff;}
 .mbtn-cancel{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--muted);}
 
-/* WAIT SCREEN */
+/* WAIT */
 #waitScreen{align-items:center;padding:20px;padding-top:50px;}
-.wt-code{font-size:48px;font-weight:900;color:var(--gold);letter-spacing:10px;text-align:center;margin:10px 0;}
-.wt-room{font-size:13px;color:var(--muted);text-align:center;margin-bottom:12px;}
+.wt-code{font-size:52px;font-weight:900;color:var(--gold);letter-spacing:10px;text-align:center;margin:10px 0;}
+.wt-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:12px;}
 .progress-bar{width:100%;max-width:400px;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin:8px 0;}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:3px;transition:width 0.5s;}
 .wt-count{font-size:12px;color:var(--muted);text-align:center;margin-bottom:12px;}
@@ -118,7 +112,7 @@ select option{background:#1a2340;}
 .wp-dot{width:10px;height:10px;border-radius:50%;}
 .wp-name{font-size:14px;font-weight:600;flex:1;}
 .wp-host{font-size:11px;color:var(--gold);font-weight:700;}
-.countdown-big{font-size:42px;font-weight:900;color:var(--blue);text-align:center;margin:12px 0;animation:pulse 1s ease-in-out infinite;}
+.cd-big{font-size:44px;font-weight:900;color:var(--blue);text-align:center;margin:12px 0;animation:pulse 1s ease-in-out infinite;}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 
 /* GAME */
@@ -160,55 +154,49 @@ select option{background:#1a2340;}
 .action-row{display:flex;gap:8px;align-items:center;}
 .dice-box{display:flex;gap:4px;}
 .die{width:32px;height:32px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#111;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-.btn-roll{flex:1;padding:11px;background:linear-gradient(135deg,var(--blue),#003d82);border:none;border-radius:11px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-roll{flex:1;padding:11px;background:linear-gradient(135deg,var(--blue),#003d82);border:none;border-radius:11px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;}
 .btn-roll:disabled{opacity:0.3;cursor:not-allowed;}
-.btn-roll:not(:disabled):active{transform:scale(0.96);}
 
-/* PROFILE TAB */
-.profile-hero{background:linear-gradient(135deg,var(--card),rgba(255,255,255,0.03));border:1px solid var(--border);border-radius:18px;padding:20px;text-align:center;margin-bottom:16px;}
-.ph-avatar{font-size:52px;margin-bottom:8px;animation:float 3s ease-in-out infinite;}
-.ph-name{font-size:20px;font-weight:900;margin-bottom:4px;}
-.ph-league{font-size:13px;padding:4px 14px;border-radius:20px;display:inline-block;font-weight:700;margin-bottom:8px;}
-.ph-pts{font-size:13px;color:var(--muted);}
-.avatar-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
-.av-btn{font-size:24px;width:44px;height:44px;border-radius:50%;border:2px solid var(--border);background:rgba(255,255,255,0.04);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-.av-btn.sel{border-color:var(--accent);background:rgba(244,197,66,0.15);transform:scale(1.15);}
-.name-edit{display:flex;gap:8px;margin-top:8px;}
-.name-edit input{flex:1;padding:10px 12px;font-size:14px;}
-.name-edit button{padding:10px 16px;background:var(--blue);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;white-space:nowrap;}
-
-/* SKINS TAB */
+/* SKINS */
+.themes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.theme-card{border:2px solid var(--border);border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;}
+.theme-card.active{border-color:var(--accent);}
+.theme-card.active::after{content:'✓';position:absolute;top:8px;right:10px;color:var(--accent);font-weight:900;}
+.theme-preview{height:50px;border-radius:8px;margin-bottom:8px;}
+.theme-name{font-size:13px;font-weight:700;}
 .skins-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .skin-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;}
 .skin-card.active{border-color:var(--accent);}
-.skin-card.active::after{content:'✓';position:absolute;top:8px;right:10px;color:var(--accent);font-weight:900;font-size:14px;}
+.skin-card.active::after{content:'✓';position:absolute;top:8px;right:10px;color:var(--accent);font-weight:900;}
 .skin-preview{height:60px;border-radius:10px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:28px;}
 .skin-name{font-size:13px;font-weight:700;margin-bottom:2px;}
 .skin-desc{font-size:10px;color:var(--muted);}
 
-/* THEMES */
-.themes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.theme-card{border:2px solid var(--border);border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s;}
-.theme-card.active{border-color:var(--accent);}
-.theme-preview{height:50px;border-radius:8px;margin-bottom:8px;}
-.theme-name{font-size:13px;font-weight:700;}
-
-/* RATING TAB */
+/* RATING */
 .league-banner{border-radius:16px;padding:20px;text-align:center;margin-bottom:16px;}
-.lb-icon{font-size:48px;margin-bottom:6px;}
+.lb-icon-big{font-size:48px;margin-bottom:6px;}
 .lb-name-big{font-size:20px;font-weight:900;margin-bottom:4px;}
-.lb-pts{font-size:13px;opacity:0.8;}
+.lb-pts-sub{font-size:13px;opacity:0.8;}
 .lb-progress{height:8px;background:rgba(255,255,255,0.15);border-radius:4px;margin-top:12px;overflow:hidden;}
 .lb-fill{height:100%;border-radius:4px;background:rgba(255,255,255,0.6);transition:width 0.5s;}
-.rating-list{margin-top:8px;}
 .rl-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;}
+.rl-row.me{border-color:var(--accent);background:rgba(244,197,66,0.05);}
 .rl-rank{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
 .rl-av{font-size:20px;width:32px;text-align:center;}
 .rl-info{flex:1;}
 .rl-name{font-size:14px;font-weight:700;}
 .rl-league{font-size:10px;color:var(--muted);}
 .rl-pts{font-size:14px;font-weight:900;color:var(--gold);}
-.rl-row.me{border-color:var(--accent);background:rgba(244,197,66,0.05);}
+
+/* PROFILE */
+.profile-hero{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;text-align:center;margin-bottom:16px;}
+.ph-av{font-size:52px;margin-bottom:8px;animation:float 3s ease-in-out infinite;}
+.ph-name{font-size:20px;font-weight:900;margin-bottom:4px;}
+.ph-league{font-size:13px;padding:4px 14px;border-radius:20px;display:inline-block;font-weight:700;margin-bottom:8px;}
+.ph-pts{font-size:13px;color:var(--muted);}
+.name-edit{display:flex;gap:8px;margin-top:8px;}
+.name-edit input{flex:1;margin-bottom:0;}
+.name-edit button{padding:10px 16px;background:var(--blue);border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;white-space:nowrap;font-size:14px;}
 
 /* GAME MODALS */
 .gm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;align-items:flex-end;justify-content:center;padding:12px;backdrop-filter:blur(6px);}
@@ -231,64 +219,67 @@ select option{background:#1a2340;}
 /* WIN */
 #winScreen{align-items:center;justify-content:center;padding:24px;text-align:center;}
 .win-big{font-size:72px;animation:bounce 0.6s ease infinite alternate;}
-@keyframes bounce{from{transform:translateY(0) scale(1)}to{transform:translateY(-14px) scale(1.05)}}
-.win-confetti{font-size:24px;margin-bottom:8px;animation:spin 2s linear infinite;}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-14px)}}
 .win-title{font-size:26px;font-weight:900;color:var(--gold);margin:12px 0 6px;}
-.win-sub{color:var(--muted);margin-bottom:24px;font-size:14px;}
+.win-sub{color:var(--muted);margin-bottom:16px;font-size:14px;}
+.pts-earned{background:rgba(244,197,66,0.1);border:1px solid rgba(244,197,66,0.3);border-radius:12px;padding:12px;margin-bottom:16px;font-size:14px;color:var(--gold);font-weight:700;}
 .end-table{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;width:100%;max-width:340px;margin:0 auto 20px;}
 .et-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;}
 .et-row:last-child{border-bottom:none;}
-.pts-earned{background:rgba(244,197,66,0.1);border:1px solid rgba(244,197,66,0.3);border-radius:12px;padding:12px;margin-bottom:16px;text-align:center;font-size:14px;color:var(--gold);font-weight:700;}
 </style>
 </head>
 <body>
 
-<!-- AUTH -->
-<div id="authScreen" class="screen active">
-  <div class="auth-logo">🏛️</div>
-  <div class="auth-title">МОНОПОЛІЯ УКРАЇНА</div>
-  <div class="auth-sub">Увійдіть щоб зберігати прогрес</div>
-  <button class="btn-google" onclick="signInGoogle()">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G"/>
-    Увійти через Google
-  </button>
-  <button class="btn-skip" onclick="signInAnon()">Грати без акаунту</button>
+<!-- SETUP -->
+<div id="setupScreen" class="screen active">
+  <div class="logo-wrap">
+    <div class="logo-emoji">🏛️</div>
+    <div class="logo-title">МОНОПОЛІЯ УКРАЇНА</div>
+    <div class="logo-sub">Онлайн мультиплеєр</div>
+  </div>
+  <div class="box" style="max-width:400px">
+    <div class="box-title">Ваше ім'я</div>
+    <input id="myNameInp" placeholder="Введіть ім'я..." maxlength="14"/>
+    <div class="box-title">Аватар</div>
+    <div class="avatar-grid" id="setupAvatarGrid"></div>
+  </div>
+  <div style="width:100%;max-width:400px">
+    <button class="btn btn-green" onclick="enterApp()">🎮 Почати</button>
+  </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div id="appScreen" class="screen">
   <div class="app-header">
-    <div class="hdr-avatar" id="hdrAvatar">🚀</div>
+    <div class="hdr-av" id="hdrAv">🚀</div>
     <div>
       <div class="hdr-name" id="hdrName">Гравець</div>
-      <div class="hdr-league" id="hdrLeague">🥉 Бронза</div>
+      <div class="hdr-info" id="hdrLeague">🥉 Бронза</div>
     </div>
     <div class="hdr-pts" id="hdrPts">0 ⭐</div>
   </div>
 
-  <!-- TAB CONTENTS -->
   <div id="tabHome" class="tab-content">
     <div class="home-banner">
       <div class="hb-flag">🇺🇦</div>
       <div class="hb-title">Монополія Україна</div>
-      <div class="hb-sub">Онлайн мультиплеєр</div>
+      <div class="hb-sub">Онлайн мультиплеєр · Оберіть кімнату</div>
     </div>
     <div class="quick-stats">
-      <div class="qs-card"><div class="qs-val" id="qs-wins">0</div><div class="qs-lbl">🏆 Перемог</div></div>
-      <div class="qs-card"><div class="qs-val" id="qs-games">0</div><div class="qs-lbl">🎮 Ігор</div></div>
-      <div class="qs-card"><div class="qs-val" id="qs-wr">0%</div><div class="qs-lbl">📈 Вінрейт</div></div>
+      <div class="qs"><div class="qs-v" id="qs-wins">0</div><div class="qs-l">🏆 Перемог</div></div>
+      <div class="qs"><div class="qs-v" id="qs-games">0</div><div class="qs-l">🎮 Ігор</div></div>
+      <div class="qs"><div class="qs-v" id="qs-wr">0%</div><div class="qs-l">📈 Вінрейт</div></div>
     </div>
     <div class="section-title">Грати</div>
     <button class="btn btn-green" onclick="switchTab('rooms')">🎮 Знайти кімнату</button>
     <button class="btn btn-blue" onclick="openCreate()">➕ Створити кімнату</button>
-    <div class="section-title" style="margin-top:16px">Персоналізація</div>
+    <div class="section-title">Персоналізація</div>
     <button class="btn btn-gray" onclick="switchTab('skins')">🎨 Скіни та теми</button>
     <button class="btn btn-gray" onclick="switchTab('rating')">🏆 Рейтинг та ліги</button>
   </div>
 
   <div id="tabRooms" class="tab-content" style="display:none">
-    <div class="rooms-actions">
+    <div class="rooms-top">
       <button class="btn-sm btn-sm-green" onclick="openCreate()">➕ Створити</button>
       <button class="btn-sm btn-sm-blue" onclick="loadRooms()">🔄 Оновити</button>
     </div>
@@ -296,44 +287,40 @@ select option{background:#1a2340;}
   </div>
 
   <div id="tabSkins" class="tab-content" style="display:none">
-    <div class="section-title">🎭 Аватари</div>
-    <div class="avatar-grid" id="avatarGrid"></div>
-
-    <div class="section-title" style="margin-top:20px">🎨 Теми</div>
+    <div class="section-title">🎭 Аватар</div>
+    <div class="avatar-grid" id="skinsAvatarGrid"></div>
+    <div class="section-title" style="margin-top:20px">🎨 Тема</div>
     <div class="themes-grid" id="themesGrid"></div>
-
-    <div class="section-title" style="margin-top:4px">🃏 Скіни дошки</div>
+    <div class="section-title">🃏 Скін дошки</div>
     <div class="skins-grid" id="skinsGrid"></div>
+  </div>
+
+  <div id="tabRating" class="tab-content" style="display:none">
+    <div class="league-banner" id="leagueBanner"></div>
+    <div class="section-title">🌍 Топ гравців</div>
+    <div id="ratingList"><div class="no-rooms">Завантаження...</div></div>
   </div>
 
   <div id="tabProfile" class="tab-content" style="display:none">
     <div class="profile-hero">
-      <div class="ph-avatar" id="profAvatar">🚀</div>
+      <div class="ph-av" id="profAv">🚀</div>
       <div class="ph-name" id="profName">Гравець</div>
       <div class="ph-league" id="profLeague">🥉 Бронза</div>
       <div class="ph-pts" id="profPts">0 очок</div>
     </div>
     <div class="section-title">Змінити ім'я</div>
     <div class="name-edit">
-      <input id="newNameInput" placeholder="Нове ім'я..." maxlength="14"/>
+      <input id="newNameInp" placeholder="Нове ім'я..." maxlength="14"/>
       <button onclick="saveName()">Зберегти</button>
     </div>
     <div class="section-title" style="margin-top:16px">Статистика</div>
-    <div class="quick-stats" style="margin-bottom:0">
-      <div class="qs-card"><div class="qs-val" id="p-wins">0</div><div class="qs-lbl">🏆 Перемог</div></div>
-      <div class="qs-card"><div class="qs-val" id="p-games">0</div><div class="qs-lbl">🎮 Ігор</div></div>
-      <div class="qs-card"><div class="qs-val" id="p-pts">0</div><div class="qs-lbl">⭐ Очок</div></div>
+    <div class="quick-stats">
+      <div class="qs"><div class="qs-v" id="p-wins">0</div><div class="qs-l">🏆 Перемог</div></div>
+      <div class="qs"><div class="qs-v" id="p-games">0</div><div class="qs-l">🎮 Ігор</div></div>
+      <div class="qs"><div class="qs-v" id="p-pts">0</div><div class="qs-l">⭐ Очок</div></div>
     </div>
-    <button class="btn btn-gray" style="margin-top:16px" onclick="signOut()">🚪 Вийти</button>
   </div>
 
-  <div id="tabRating" class="tab-content" style="display:none">
-    <div class="league-banner" id="leagueBanner"></div>
-    <div class="section-title">🌍 Топ гравців</div>
-    <div class="rating-list" id="ratingList"><div class="no-rooms">Завантаження...</div></div>
-  </div>
-
-  <!-- TAB BAR -->
   <div class="tab-bar">
     <button class="tab-btn active" id="tab-home" onclick="switchTab('home')"><div class="ti">🏠</div>Головна</button>
     <button class="tab-btn" id="tab-rooms" onclick="switchTab('rooms')"><div class="ti">🎮</div>Кімнати</button>
@@ -348,12 +335,12 @@ select option{background:#1a2340;}
   <div style="text-align:center;padding-top:20px">
     <div style="font-size:12px;color:var(--muted)">Код кімнати</div>
     <div class="wt-code" id="wtCode">----</div>
-    <div class="wt-room" id="wtRoom"></div>
+    <div class="wt-sub" id="wtSub"></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
   <div class="wt-count" id="wtCount">0 / 4</div>
   <div class="wp-list" id="wpList"></div>
-  <div class="countdown-big" id="cdBig" style="display:none"></div>
+  <div class="cd-big" id="cdBig" style="display:none"></div>
   <button class="btn btn-gray" style="max-width:400px;margin-top:12px" onclick="leaveRoom()">← Вийти</button>
 </div>
 
@@ -361,7 +348,7 @@ select option{background:#1a2340;}
 <div id="gameScreen" class="screen">
   <div class="g-header">
     <div class="g-title">🇺🇦 МОНОПОЛІЯ</div>
-    <div style="font-size:10px;color:var(--muted)" id="gModeBadge"></div>
+    <div style="font-size:10px;color:var(--muted)" id="gMode"></div>
     <div class="g-bank">Банк: <b id="bankDisp">₴150,000</b></div>
   </div>
   <div class="board-wrap"><div class="board" id="board"></div></div>
@@ -377,7 +364,6 @@ select option{background:#1a2340;}
 
 <!-- WIN -->
 <div id="winScreen" class="screen">
-  <div class="win-confetti">🎊</div>
   <div class="win-big" id="winEmoji">🏆</div>
   <div class="win-title" id="winTitle">Перемога!</div>
   <div class="win-sub" id="winSub"></div>
@@ -386,32 +372,32 @@ select option{background:#1a2340;}
   <button class="btn btn-blue" style="max-width:340px" onclick="backToApp()">🏠 До головної</button>
 </div>
 
-<!-- CREATE MODAL -->
-<div class="modal-overlay" id="createModal">
+<!-- CREATE -->
+<div class="overlay" id="createOverlay">
   <div class="modal">
     <div class="modal-title">➕ Нова кімната</div>
-    <label>Назва кімнати</label>
-    <input id="roomNameInp" placeholder="Моя кімната..." maxlength="20"/>
+    <label>Назва</label>
+    <input id="roomNameInp" placeholder="Назва кімнати..." maxlength="20"/>
     <label>Максимум гравців</label>
     <div class="max-picker">
       <button class="mp" id="mp2" onclick="selMax(2)">2</button>
       <button class="mp" id="mp3" onclick="selMax(3)">3</button>
       <button class="mp sel" id="mp4" onclick="selMax(4)">4</button>
     </div>
-    <label>Режим гри</label>
-    <select id="gameModeInp">
+    <label>Режим</label>
+    <select id="modeInp">
       <option value="classic">🏙️ Класичний</option>
       <option value="fast">⚡ Швидкий (капітал x2)</option>
       <option value="survival">💀 Виживання (оренда x2)</option>
     </select>
     <div class="modal-btns">
-      <button class="mbtn mbtn-primary" onclick="createRoom()">✅ Створити</button>
+      <button class="mbtn mbtn-ok" onclick="createRoom()">✅ Створити</button>
       <button class="mbtn mbtn-cancel" onclick="closeCreate()">Скасувати</button>
     </div>
   </div>
 </div>
 
-<!-- BUY MODAL -->
+<!-- BUY -->
 <div class="gm-overlay" id="buyOverlay">
   <div class="gmodal">
     <div class="gm-head"><div class="gm-ico" id="bIco"></div><div><div class="gm-title" id="bName"></div><div class="gm-sub" id="bGrp"></div></div></div>
@@ -428,7 +414,7 @@ select option{background:#1a2340;}
   </div>
 </div>
 
-<!-- EVENT MODAL -->
+<!-- EVENT -->
 <div class="gm-overlay" id="evOverlay">
   <div class="gmodal">
     <div class="gm-head"><div class="gm-ico" id="evIco"></div><div><div class="gm-title" id="evTitle"></div></div></div>
@@ -441,21 +427,17 @@ select option{background:#1a2340;}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import{getDatabase,ref,set,get,onValue,update,remove}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import{getAuth,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signInAnonymously,onAuthStateChanged,signOut as fbSignOut}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  
+
 const FB={apiKey:"AIzaSyBQNVeXBCqQi5eKhfjAQTJivwKzT9gXT0k",authDomain:"monopoly-fc387.firebaseapp.com",databaseURL:"https://monopoly-fc387-default-rtdb.firebaseio.com",projectId:"monopoly-fc387",storageBucket:"monopoly-fc387.firebasestorage.app",messagingSenderId:"748860996691",appId:"1:748860996691:web:731de9e774cee122991aa6"};
 const fapp=initializeApp(FB);
 const db=getDatabase(fapp);
-const auth=getAuth(fapp);
-getRedirectResult(auth).catch(e=>console.log(e));
-  
-// ── CONSTANTS ──────────────────────────────────────────────────────────────────
+
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
 const AVATARS=['🚀','🦁','🐉','🌟','🎭','🦊','🐺','🦅','🔥','💎','🏆','👑','🎯','⚡','🌈','🦄','🐯','🦋','🎪','🌊','🦸','🤺','🧙','🦝'];
 const PC=['#e53935','#1e88e5','#43a047','#fb8c00'];
 const GC=['#8B4513','#00CED1','#FF69B4','#FF8C00','#FF0000','#FFD700','#228B22','#00008B'];
 const GN=['Коричнева','Блакитна','Рожева','Оранжева','Червона','Жовта','Зелена','Синя'];
 const DF=['','⚀','⚁','⚂','⚃','⚄','⚅'];
-
 const THEMES=[
   {id:'dark',name:'🌙 Темна',bg:'#0a0f1e',card:'#111827',border:'#1e3a5f',accent:'#F4C542'},
   {id:'light',name:'☀️ Світла',bg:'#f0f4ff',card:'#ffffff',border:'#c5d0e8',accent:'#005BBB'},
@@ -464,14 +446,12 @@ const THEMES=[
   {id:'purple',name:'💜 Фіолетова',bg:'#0f0a1e',card:'#1a1030',border:'#2d1f5e',accent:'#9c27b0'},
   {id:'gold',name:'✨ Золота',bg:'#1a1400',card:'#251e00',border:'#4a3a00',accent:'#FFD700'},
 ];
-
 const BOARD_SKINS=[
-  {id:'default',name:'Класична',desc:'Стандартний вигляд',bg:'#111827',preview:'🏙️'},
-  {id:'night',name:'Нічне місто',desc:'Темні кольори',bg:'#050a14',preview:'🌃'},
-  {id:'nature',name:'Природа',desc:'Зелені відтінки',bg:'#0a1a0a',preview:'🌿'},
+  {id:'default',name:'Класична',desc:'Стандартний',bg:'',preview:'🏙️'},
+  {id:'night',name:'Нічне місто',desc:'Темні тони',bg:'#050a14',preview:'🌃'},
+  {id:'nature',name:'Природа',desc:'Зелені тони',bg:'#0a1a0a',preview:'🌿'},
   {id:'retro',name:'Ретро',desc:'Стиль 8-біт',bg:'#1a0a00',preview:'🕹️'},
 ];
-
 const LEAGUES=[
   {name:'Бронза',icon:'🥉',color:'#cd7f32',min:0,max:99},
   {name:'Срібло',icon:'🥈',color:'#c0c0c0',min:100,max:249},
@@ -480,7 +460,6 @@ const LEAGUES=[
   {name:'Діамант',icon:'💠',color:'#1e90ff',min:1000,max:1999},
   {name:'Легенда',icon:'👑',color:'#FF4500',min:2000,max:Infinity},
 ];
-
 const BOARD=[
   {id:0,type:'corner',name:'СТАРТ',icon:'🏁',pos:[11,1]},
   {id:1,type:'property',name:'Кривий Ріг',group:0,price:600,rent:[20,100,300,450,625,750],housePrice:500,icon:'⛏️',pos:[11,2]},
@@ -523,7 +502,6 @@ const BOARD=[
   {id:38,type:'tax',name:'Акциз',amount:100,icon:'📋',pos:[9,1]},
   {id:39,type:'property',name:'Київ',group:7,price:4000,rent:[500,2000,6000,9000,12000,15000],housePrice:4000,icon:'🏛️',pos:[10,1]},
 ];
-
 const CHANCE=[
   {text:'Премія від держави! +₴2000',amount:2000,icon:'🎁'},
   {text:'Штраф. -₴500',amount:-500,icon:'🚔'},
@@ -545,133 +523,110 @@ const CHEST=[
   {text:'Комунальні. -₴800',amount:-800,icon:'💡'},
 ];
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let myUid=null,myProfile={name:'Гравець',avatar:'🚀',pts:0,wins:0,games:0,theme:'dark',skin:'default'};
-let selectedMax=4,roomCode=null,isHost=false,myIndex=-1,gameState=null,roomRef=null,roomUnsub=null,cdTimer=null;
+// ── PROFILE ───────────────────────────────────────────────────────────────────
+let myId='u_'+Math.random().toString(36).substr(2,9);
+let profile={name:'Гравець',avatar:'🚀',pts:0,wins:0,games:0,theme:'dark',skin:'default'};
+let selectedMax=4;
+let roomCode=null,isHost=false,myIndex=-1,gameState=null,roomRef=null,roomUnsub=null,cdTimer=null;
 
-// ── AUTH ──────────────────────────────────────────────────────────────────────
-window.signInGoogle=async function(){
-  try{
-window.signInGoogle=function(){
-  const provider=new GoogleAuthProvider();
-  signInWithRedirect(auth,provider).catch(e=>{
-    console.error(e);
-    alert('Помилка: '+e.message);
-  });
-};
+// Load from localStorage
+const saved=localStorage.getItem('monopoly_profile');
+if(saved){try{const p=JSON.parse(saved);profile={...profile,...p};myId=p.id||myId;}catch(e){}}
 
-window.signInAnon=function(){
-  signInAnonymously(auth).catch(e=>{
-    console.error(e);
-    alert('Помилка анонімного входу: '+e.message);
-  });
-};
-    
-window.signOut=async function(){
-  await fbSignOut(auth);
-  showScreen('authScreen');
-};
-
-onAuthStateChanged(auth,async user=>{
-  if(!user){showScreen('authScreen');return;}
-  myUid=user.uid;
-  const snap=await get(ref(db,'users/'+myUid));
-  if(snap.exists()){
-    myProfile={...myProfile,...snap.val()};
-    if(user.displayName&&!snap.val().nameSet)myProfile.name=user.displayName;
-  } else {
-    if(user.displayName)myProfile.name=user.displayName;
-    await saveProfile();
-  }
-  applyTheme(myProfile.theme||'dark');
-  initUI();
-  showScreen('appScreen');
-  loadRooms();
-});
-
-async function saveProfile(){
-  if(!myUid)return;
-  await set(ref(db,'users/'+myUid),myProfile);
-  // Update leaderboard
-  await set(ref(db,'leaderboard/'+myUid),{
-    name:myProfile.name,avatar:myProfile.avatar,
-    pts:myProfile.pts||0,wins:myProfile.wins||0,games:myProfile.games||0
-  });
-  refreshProfileUI();
+function saveLocal(){
+  localStorage.setItem('monopoly_profile',JSON.stringify({...profile,id:myId}));
 }
 
-function getLeague(pts){
-  return LEAGUES.find(l=>pts>=l.min&&pts<=l.max)||LEAGUES[0];
-}
+function getLeague(pts){return LEAGUES.find(l=>pts>=l.min&&pts<=l.max)||LEAGUES[0];}
 
-function refreshProfileUI(){
-  const l=getLeague(myProfile.pts||0);
-  document.getElementById('hdrAvatar').textContent=myProfile.avatar;
-  document.getElementById('hdrName').textContent=myProfile.name;
+function refreshUI(){
+  const l=getLeague(profile.pts||0);
+  document.getElementById('hdrAv').textContent=profile.avatar;
+  document.getElementById('hdrName').textContent=profile.name;
   document.getElementById('hdrLeague').textContent=l.icon+' '+l.name;
-  document.getElementById('hdrPts').textContent=(myProfile.pts||0)+' ⭐';
-  document.getElementById('profAvatar').textContent=myProfile.avatar;
-  document.getElementById('profName').textContent=myProfile.name;
+  document.getElementById('hdrPts').textContent=(profile.pts||0)+' ⭐';
+  document.getElementById('profAv').textContent=profile.avatar;
+  document.getElementById('profName').textContent=profile.name;
   document.getElementById('profLeague').textContent=l.icon+' '+l.name;
   document.getElementById('profLeague').style.background=l.color+'22';
   document.getElementById('profLeague').style.color=l.color;
-  document.getElementById('profPts').textContent=(myProfile.pts||0)+' очок';
-  document.getElementById('p-wins').textContent=myProfile.wins||0;
-  document.getElementById('p-games').textContent=myProfile.games||0;
-  document.getElementById('p-pts').textContent=myProfile.pts||0;
-  document.getElementById('qs-wins').textContent=myProfile.wins||0;
-  document.getElementById('qs-games').textContent=myProfile.games||0;
-  const wr=myProfile.games>0?Math.round((myProfile.wins||0)/myProfile.games*100):0;
+  document.getElementById('profPts').textContent=(profile.pts||0)+' очок';
+  document.getElementById('p-wins').textContent=profile.wins||0;
+  document.getElementById('p-games').textContent=profile.games||0;
+  document.getElementById('p-pts').textContent=profile.pts||0;
+  document.getElementById('qs-wins').textContent=profile.wins||0;
+  document.getElementById('qs-games').textContent=profile.games||0;
+  const wr=profile.games>0?Math.round((profile.wins||0)/profile.games*100):0;
   document.getElementById('qs-wr').textContent=wr+'%';
-  document.getElementById('newNameInput').value=myProfile.name;
+  document.getElementById('newNameInp').value=profile.name;
 }
 
-window.saveName=async function(){
-  const n=document.getElementById('newNameInput').value.trim();
-  if(!n)return;
-  myProfile.name=n;myProfile.nameSet=true;
-  await saveProfile();
+// ── SETUP ─────────────────────────────────────────────────────────────────────
+function buildAvatarGrid(containerId,onSelect){
+  const g=document.getElementById(containerId);g.innerHTML='';
+  AVATARS.forEach(av=>{
+    const b=document.createElement('button');
+    b.className='av-btn'+(av===profile.avatar?' sel':'');
+    b.textContent=av;
+    b.onclick=()=>{profile.avatar=av;saveLocal();buildAvatarGrid(containerId,onSelect);if(onSelect)onSelect();};
+    g.appendChild(b);
+  });
+}
+
+buildAvatarGrid('setupAvatarGrid',null);
+
+// Pre-fill name
+document.getElementById('myNameInp').value=profile.name;
+
+window.enterApp=function(){
+  const name=document.getElementById('myNameInp').value.trim();
+  if(!name){alert('Введіть ім\'я!');return;}
+  profile.name=name;
+  saveLocal();
+  applyTheme(profile.theme||'dark');
+  buildAvatarGrid('skinsAvatarGrid',()=>refreshUI());
+  renderThemes();renderSkins();refreshUI();
+  showScreen('appScreen');
+  loadRooms();
+  saveToFirebase();
 };
 
-// ── TABS ──────────────────────────────────────────────────────────────────────
-const TAB_CONTENTS={home:'tabHome',rooms:'tabRooms',skins:'tabSkins',profile:'tabProfile',rating:'tabRating'};
+async function saveToFirebase(){
+  try{
+    await set(ref(db,'leaderboard/'+myId),{
+      name:profile.name,avatar:profile.avatar,
+      pts:profile.pts||0,wins:profile.wins||0,games:profile.games||0
+    });
+  }catch(e){}
+}
 
+// ── TABS ──────────────────────────────────────────────────────────────────────
+const TABS={home:'tabHome',rooms:'tabRooms',skins:'tabSkins',rating:'tabRating',profile:'tabProfile'};
 window.switchTab=function(tab){
-  Object.values(TAB_CONTENTS).forEach(id=>{document.getElementById(id).style.display='none';});
+  Object.values(TABS).forEach(id=>{document.getElementById(id).style.display='none';});
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(TAB_CONTENTS[tab]).style.display='block';
+  document.getElementById(TABS[tab]).style.display='block';
   document.getElementById('tab-'+tab).classList.add('active');
   if(tab==='rooms')loadRooms();
   if(tab==='rating')loadRating();
-  if(tab==='skins')renderSkins();
+  if(tab==='skins'){buildAvatarGrid('skinsAvatarGrid',()=>refreshUI());renderThemes();renderSkins();}
 };
 
-// ── INIT UI ───────────────────────────────────────────────────────────────────
-function initUI(){
-  buildAvatarGrid();
-  renderSkins();
-  renderThemes();
-  refreshProfileUI();
-}
-
-function buildAvatarGrid(){
-  const g=document.getElementById('avatarGrid');g.innerHTML='';
-  AVATARS.forEach(av=>{
-    const b=document.createElement('button');
-    b.className='av-btn'+(av===myProfile.avatar?' sel':'');
-    b.textContent=av;
-    b.onclick=async()=>{myProfile.avatar=av;await saveProfile();buildAvatarGrid();};
-    g.appendChild(b);
-  });
+// ── THEMES & SKINS ────────────────────────────────────────────────────────────
+function applyTheme(id){
+  const t=THEMES.find(x=>x.id===id)||THEMES[0];
+  const r=document.documentElement.style;
+  r.setProperty('--bg',t.bg);r.setProperty('--card',t.card);
+  r.setProperty('--border',t.border);r.setProperty('--accent',t.accent);
 }
 
 function renderThemes(){
   const g=document.getElementById('themesGrid');g.innerHTML='';
   THEMES.forEach(t=>{
     const c=document.createElement('div');
-    c.className='theme-card'+(myProfile.theme===t.id?' active':'');
+    c.className='theme-card'+(profile.theme===t.id?' active':'');
     c.innerHTML=`<div class="theme-preview" style="background:${t.bg};border:2px solid ${t.accent}"></div><div class="theme-name">${t.name}</div>`;
-    c.onclick=async()=>{myProfile.theme=t.id;applyTheme(t.id);await saveProfile();renderThemes();};
+    c.onclick=()=>{profile.theme=t.id;applyTheme(t.id);saveLocal();renderThemes();};
     g.appendChild(c);
   });
 }
@@ -680,33 +635,29 @@ function renderSkins(){
   const g=document.getElementById('skinsGrid');g.innerHTML='';
   BOARD_SKINS.forEach(s=>{
     const c=document.createElement('div');
-    c.className='skin-card'+(myProfile.skin===s.id?' active':'');
-    c.innerHTML=`<div class="skin-preview" style="background:${s.bg}">${s.preview}</div><div class="skin-name">${s.name}</div><div class="skin-desc">${s.desc}</div>`;
-    c.onclick=async()=>{myProfile.skin=s.id;await saveProfile();renderSkins();};
+    c.className='skin-card'+(profile.skin===s.id?' active':'');
+    c.innerHTML=`<div class="skin-preview" style="background:${s.bg||'var(--card)'}">${s.preview}</div><div class="skin-name">${s.name}</div><div class="skin-desc">${s.desc}</div>`;
+    c.onclick=()=>{profile.skin=s.id;saveLocal();renderSkins();};
     g.appendChild(c);
   });
 }
 
-function applyTheme(id){
-  const t=THEMES.find(x=>x.id===id)||THEMES[0];
-  const r=document.documentElement.style;
-  r.setProperty('--bg',t.bg);r.setProperty('--card',t.card);
-  r.setProperty('--border',t.border);r.setProperty('--accent',t.accent);
-}
+// ── PROFILE ───────────────────────────────────────────────────────────────────
+window.saveName=function(){
+  const n=document.getElementById('newNameInp').value.trim();
+  if(!n)return;
+  profile.name=n;saveLocal();refreshUI();saveToFirebase();
+};
 
 // ── RATING ────────────────────────────────────────────────────────────────────
 async function loadRating(){
-  const l=getLeague(myProfile.pts||0);
+  const l=getLeague(profile.pts||0);
   const next=LEAGUES[LEAGUES.indexOf(l)+1];
-  const pct=next?Math.round(((myProfile.pts||0)-l.min)/(next.min-l.min)*100):100;
-  document.getElementById('leagueBanner').style.background=`linear-gradient(135deg,${l.color}44,${l.color}22)`;
-  document.getElementById('leagueBanner').style.border=`1px solid ${l.color}44`;
-  document.getElementById('leagueBanner').innerHTML=`
-    <div class="lb-icon">${l.icon}</div>
-    <div class="lb-name-big" style="color:${l.color}">${l.name}</div>
-    <div class="lb-pts">${myProfile.pts||0} очок${next?' · до '+next.name+': '+(next.min-(myProfile.pts||0)):' · Максимальна ліга!'}</div>
-    <div class="lb-progress"><div class="lb-fill" style="width:${pct}%"></div></div>`;
-
+  const pct=next?Math.min(100,Math.round(((profile.pts||0)-l.min)/(next.min-l.min)*100)):100;
+  const banner=document.getElementById('leagueBanner');
+  banner.style.background=`linear-gradient(135deg,${l.color}44,${l.color}22)`;
+  banner.style.border=`1px solid ${l.color}44`;
+  banner.innerHTML=`<div class="lb-icon-big">${l.icon}</div><div class="lb-name-big" style="color:${l.color}">${l.name}</div><div class="lb-pts-sub">${profile.pts||0} очок${next?' · до '+next.name+': '+(next.min-(profile.pts||0)):' · Максимальна ліга!'}</div><div class="lb-progress"><div class="lb-fill" style="width:${pct}%"></div></div>`;
   const rl=document.getElementById('ratingList');
   rl.innerHTML='<div class="no-rooms">Завантаження...</div>';
   try{
@@ -716,12 +667,7 @@ async function loadRating(){
     const medals=['🥇','🥈','🥉'];
     rl.innerHTML=data.map(([uid,p],i)=>{
       const lg=getLeague(p.pts||0);
-      return`<div class="rl-row${uid===myUid?' me':''}">
-        <div class="rl-rank">${medals[i]||i+1}</div>
-        <div class="rl-av">${p.avatar||'🎮'}</div>
-        <div class="rl-info"><div class="rl-name">${p.name}${uid===myUid?' (Ви)':''}</div><div class="rl-league" style="color:${lg.color}">${lg.icon} ${lg.name}</div></div>
-        <div class="rl-pts">${p.pts||0} ⭐</div>
-      </div>`;
+      return`<div class="rl-row${uid===myId?' me':''}"><div class="rl-rank">${medals[i]||i+1}</div><div class="rl-av">${p.avatar||'🎮'}</div><div class="rl-info"><div class="rl-name">${p.name}${uid===myId?' (Ви)':''}</div><div class="rl-league" style="color:${lg.color}">${lg.icon} ${lg.name}</div></div><div class="rl-pts">${p.pts||0} ⭐</div></div>`;
     }).join('');
   }catch(e){rl.innerHTML='<div class="no-rooms">Помилка</div>';}
 }
@@ -735,17 +681,14 @@ window.loadRooms=async function(){
     if(!snap.exists()){list.innerHTML='<div class="no-rooms">Немає кімнат.<br>Натисніть «Створити»!</div>';return;}
     const rooms=Object.entries(snap.val()).filter(([,r])=>r.status==='waiting'||r.status==='playing');
     if(!rooms.length){list.innerHTML='<div class="no-rooms">Немає відкритих кімнат</div>';return;}
-    const modeLabel=m=>m==='fast'?'⚡ Швидкий':m==='survival'?'💀 Виживання':'🏙️ Класичний';
+    const ml=m=>m==='fast'?'⚡ Швидкий':m==='survival'?'💀 Виживання':'🏙️ Класичний';
     list.innerHTML=rooms.map(([code,r])=>{
       const cnt=Object.keys(r.players||{}).length,max=r.maxPlayers||4;
       const dots=Array.from({length:max},(_,i)=>`<div class="rd${i<cnt?' on':''}"></div>`).join('');
-      const isPlaying=r.status==='playing';
-      return`<div class="room-card" onclick="${isPlaying?'':``joinRoom('${code}')``}">
-        <div class="rc-top">
-          <div class="rc-name">${r.name||'Кімната'}</div>
-          <div class="rc-badge ${isPlaying?'rb-play':cnt>=max?'rb-full':'rb-wait'}">${isPlaying?'Грають':cnt>=max?'Повна':'Чекає'}</div>
-        </div>
-        <div class="rc-meta">${modeLabel(r.mode)} · ${cnt}/${max} гравців</div>
+      const playing=r.status==='playing';
+      return`<div class="room-card" onclick="${playing?'':("joinRoom('"+code+"')")}">
+        <div class="rc-top"><div class="rc-name">${r.name||'Кімната'}</div><div class="rc-badge ${playing?'rb-play':cnt>=max?'rb-full':'rb-wait'}">${playing?'Грають':cnt>=max?'Повна':'Чекає'}</div></div>
+        <div class="rc-meta">${ml(r.mode)} · ${cnt}/${max} гравців</div>
         <div class="rc-dots">${dots}</div>
       </div>`;
     }).join('');
@@ -754,29 +697,29 @@ window.loadRooms=async function(){
 
 window.selMax=function(n){
   selectedMax=n;
-  [2,3,4].forEach(v=>{document.getElementById('mp'+v).classList.toggle('sel',v===n);});
+  [2,3,4].forEach(v=>{
+    const el=document.getElementById('mp'+v);
+    if(el)el.className='mp'+(v===n?' sel':'');
+  });
 };
 
-window.openCreate=function(){document.getElementById('createModal').classList.add('open');};
-window.closeCreate=function(){document.getElementById('createModal').classList.remove('open');};
+window.openCreate=function(){document.getElementById('createOverlay').classList.add('open');};
+window.closeCreate=function(){document.getElementById('createOverlay').classList.remove('open');};
 
 window.createRoom=async function(){
-  const name=myProfile.name;
-  const rName=document.getElementById('roomNameInp').value.trim()||name+'\'s кімната';
-  const mode=document.getElementById('gameModeInp').value;
+  const rName=document.getElementById('roomNameInp').value.trim()||profile.name+'\'s кімната';
+  const mode=document.getElementById('modeInp').value;
   roomCode=Math.floor(1000+Math.random()*9000).toString();
   isHost=true;myIndex=0;
   roomRef=ref(db,'rooms/'+roomCode);
   await set(roomRef,{
-    name:rName,host:myUid,status:'waiting',maxPlayers:selectedMax,mode,
-    players:{[myUid]:{name,avatar:myProfile.avatar,color:PC[0],index:0,uid:myUid}}
+    name:rName,host:myId,status:'waiting',maxPlayers:selectedMax,mode,
+    players:{[myId]:{name:profile.name,avatar:profile.avatar,color:PC[0],index:0,id:myId}}
   });
-  closeCreate();
-  showWaitScreen();
+  closeCreate();showWaitScreen();
 };
 
 window.joinRoom=async function(code){
-  const name=myProfile.name;
   roomCode=code;isHost=false;
   roomRef=ref(db,'rooms/'+roomCode);
   const snap=await get(roomRef);
@@ -784,10 +727,10 @@ window.joinRoom=async function(code){
   const data=snap.val();
   if(data.status!=='waiting'){alert('Гра вже почалась!');return;}
   const cnt=Object.keys(data.players||{}).length;
-  if(cnt>=data.maxPlayers){alert('Кімната повна!');return;}
+  if(cnt>=(data.maxPlayers||4)){alert('Кімната повна!');return;}
   myIndex=cnt;
   await update(ref(db,'rooms/'+roomCode+'/players'),{
-    [myUid]:{name,avatar:myProfile.avatar,color:PC[myIndex%PC.length],index:myIndex,uid:myUid}
+    [myId]:{name:profile.name,avatar:profile.avatar,color:PC[myIndex%PC.length],index:myIndex,id:myId}
   });
   showWaitScreen();
 };
@@ -801,7 +744,7 @@ function showWaitScreen(){
 window.leaveRoom=async function(){
   if(roomUnsub)roomUnsub();
   if(cdTimer){clearInterval(cdTimer);cdTimer=null;}
-  if(roomRef)await remove(ref(db,'rooms/'+roomCode+'/players/'+myUid));
+  if(roomRef)await remove(ref(db,'rooms/'+roomCode+'/players/'+myId));
   roomCode=null;showScreen('appScreen');loadRooms();
 };
 
@@ -812,26 +755,16 @@ function listenRoom(){
     const data=snap.val();
     const players=Object.values(data.players||{}).sort((a,b)=>a.index-b.index);
     const max=data.maxPlayers||4;
-    const modeLabel=data.mode==='fast'?'⚡ Швидкий':data.mode==='survival'?'💀 Виживання':'🏙️ Класичний';
-    document.getElementById('wtRoom').textContent=(data.name||'')+' · '+modeLabel;
-    document.getElementById('wtCount').textContent=`${players.length} / ${max} гравців`;
+    const ml=data.mode==='fast'?'⚡ Швидкий':data.mode==='survival'?'💀 Виживання':'🏙️ Класичний';
+    document.getElementById('wtSub').textContent=(data.name||'')+' · '+ml;
+    document.getElementById('wtCount').textContent=players.length+' / '+max+' гравців';
     document.getElementById('progFill').style.width=(players.length/max*100)+'%';
-    document.getElementById('wpList').innerHTML=players.map(p=>`
-      <div class="wp-item">
-        <div class="wp-dot" style="background:${p.color}"></div>
-        <div class="wp-name">${p.avatar} ${p.name}</div>
-        ${p.index===0?'<div class="wp-host">Хост 👑</div>':''}
-      </div>`).join('');
-
+    document.getElementById('wpList').innerHTML=players.map(p=>`<div class="wp-item"><div class="wp-dot" style="background:${p.color}"></div><div class="wp-name">${p.avatar} ${p.name}</div>${p.index===0?'<div class="wp-host">Хост 👑</div>':''}</div>`).join('');
     if(players.length>=max&&data.status==='waiting'&&!cdTimer)startCD(data,players);
-
     if(data.status==='playing'&&data.gameState){
       if(cdTimer){clearInterval(cdTimer);cdTimer=null;}
       gameState=data.gameState;
-      if(document.getElementById('waitScreen').classList.contains('active')){
-        showScreen('gameScreen');
-        renderBoard();
-      }
+      if(document.getElementById('waitScreen').classList.contains('active')){showScreen('gameScreen');renderBoard();}
       applyState();
     }
     if(data.status==='won'&&data.gameState)showWinScreen(data.gameState);
@@ -846,30 +779,22 @@ function startCD(data,players){
     if(s<=0){
       clearInterval(cdTimer);cdTimer=null;
       document.getElementById('cdBig').style.display='none';
-      if(isHost){
-        const gs=initGS(players,data.maxPlayers,data.mode||'classic');
-        await update(roomRef,{status:'playing',gameState:gs});
-      }
+      if(isHost){const gs=initGS(players,data.maxPlayers,data.mode||'classic');await update(roomRef,{status:'playing',gameState:gs});}
     }
     s--;
   },1000);
 }
 
-// ── GAME STATE ─────────────────────────────────────────────────────────────────
+// ── GAME STATE ────────────────────────────────────────────────────────────────
 function initGS(players,max,mode){
   const sm=mode==='fast'?30000:15000;
-  return{
-    players:players.map((p,i)=>({name:p.name,avatar:p.avatar,color:p.color,money:sm,pos:0,bankrupt:false,inJail:false,jailTurns:0,index:i})),
-    currentPlayerIdx:0,bankMoney:150000,owned:{},houses:{},
-    log:[],chat:[],chanceIdx:0,chestIdx:0,diceRolled:false,gameOver:false,
-    lastDice:[1,1],mode:mode||'classic',pendingBuy:null,pendingEvent:null,
-  };
+  return{players:players.map((p,i)=>({name:p.name,avatar:p.avatar,color:p.color,money:sm,pos:0,bankrupt:false,inJail:false,jailTurns:0,index:i})),currentPlayerIdx:0,bankMoney:150000,owned:{},houses:{},log:[],chat:[],chanceIdx:0,chestIdx:0,diceRolled:false,gameOver:false,lastDice:[1,1],mode:mode||'classic',pendingBuy:null,pendingEvent:null};
 }
 
 function applyState(){
   const gs=gameState;if(!gs)return;
   document.getElementById('bankDisp').textContent='₴'+(gs.bankMoney||0).toLocaleString();
-  document.getElementById('gModeBadge').textContent=gs.mode==='fast'?'⚡':gs.mode==='survival'?'💀':'';
+  document.getElementById('gMode').textContent=gs.mode==='fast'?'⚡ Швидкий':gs.mode==='survival'?'💀 Виживання':'';
   renderPlayers(gs);renderOwned(gs);renderTokens(gs);renderChat(gs);
   const isMy=myIndex===gs.currentPlayerIdx;
   document.getElementById('myTurnBadge').classList.toggle('show',isMy&&!gs.diceRolled&&!gs.gameOver);
@@ -889,34 +814,25 @@ window.rollDice=async function(){
   gs.lastDice=[d1,d2];gs.diceRolled=true;
   const p=gs.players[gs.currentPlayerIdx];
   addLog(gs,`${p.avatar} ${p.name} кинув ${d1}+${d2}=${total}`);
-
   if(p.inJail){
     p.jailTurns=(p.jailTurns||0)+1;
     if(d1===d2){p.inJail=false;p.jailTurns=0;addLog(gs,`✅ ${p.name} вийшов!`);}
     else if(p.jailTurns>=3){p.money-=500;gs.bankMoney+=500;p.inJail=false;p.jailTurns=0;}
     else{await saveGS(gs);setTimeout(()=>endTurn(gs),1400);return;}
   }
-
   const old=p.pos,np=(old+total)%40;
   if(np<old||(old+total>=40)){p.money+=2000;gs.bankMoney-=2000;addLog(gs,`${p.name} пройшов СТАРТ! +₴2000`);}
-  p.pos=np;
-  addLog(gs,`${p.avatar} → ${BOARD[np].name}`);
+  p.pos=np;addLog(gs,`${p.avatar} → ${BOARD[np].name}`);
   await land(gs,gs.currentPlayerIdx,np);
 };
 
 async function land(gs,pIdx,pos){
   const p=gs.players[pIdx],cell=BOARD[pos],rm=gs.mode==='survival'?2:1;
   if(cell.type==='corner'){
-    if(cell.id===30){p.pos=10;p.inJail=true;p.jailTurns=0;
-      gs.pendingEvent={playerIdx:pIdx,icon:'⛓️',title:'ВЯЗНИЦЯ!',text:`${p.name} відправлений до вязниці!`,amt:''};
-      await saveGS(gs);return;}
+    if(cell.id===30){p.pos=10;p.inJail=true;p.jailTurns=0;gs.pendingEvent={playerIdx:pIdx,icon:'⛓️',title:'ВЯЗНИЦЯ!',text:`${p.name} відправлений до вязниці!`,amt:''};await saveGS(gs);return;}
     await endTurn(gs);return;
   }
-  if(cell.type==='tax'){
-    p.money-=cell.amount;gs.bankMoney+=cell.amount;
-    gs.pendingEvent={playerIdx:pIdx,icon:'📋',title:cell.name,text:'Сплачено',amt:`-₴${cell.amount}`};
-    await saveGS(gs);return;
-  }
+  if(cell.type==='tax'){p.money-=cell.amount;gs.bankMoney+=cell.amount;gs.pendingEvent={playerIdx:pIdx,icon:'📋',title:cell.name,text:'Сплачено',amt:`-₴${cell.amount}`};await saveGS(gs);return;}
   if(cell.type==='chance'||cell.type==='chest'){
     const deck=cell.type==='chance'?CHANCE:CHEST;
     const card=deck[(cell.type==='chance'?gs.chanceIdx++:gs.chestIdx++)%deck.length];
@@ -971,10 +887,10 @@ async function endTurn(gs){
     gs.gameOver=true;
     const winner=active[0]||gs.players.reduce((a,b)=>a.money>b.money?a:b);
     const won=winner.index===myIndex;
-    const pts=(won?50:10)+(myProfile.pts||0);
-    myProfile.pts=pts;myProfile.games=(myProfile.games||0)+1;
-    if(won)myProfile.wins=(myProfile.wins||0)+1;
-    await saveProfile();
+    profile.pts=(profile.pts||0)+(won?50:10);
+    profile.games=(profile.games||0)+1;
+    if(won)profile.wins=(profile.wins||0)+1;
+    saveLocal();saveToFirebase();
     await update(roomRef,{status:'won',gameState:gs});return;
   }
   do{gs.currentPlayerIdx=(gs.currentPlayerIdx+1)%gs.players.length;}
@@ -1028,10 +944,7 @@ window.ackEvent=function(){
 function renderChat(gs){
   const msgs=document.getElementById('chatMsgs');if(!msgs)return;
   const chat=gs.chat||[];
-  msgs.innerHTML=chat.slice(-40).map(m=>
-    m.sys?`<div class="cm sys">${m.text}</div>`
-    :`<div class="cm"><span class="cm-n" style="color:${m.color}">${m.avatar}${m.name}:</span> ${m.text}</div>`
-  ).join('');
+  msgs.innerHTML=chat.slice(-40).map(m=>m.sys?`<div class="cm sys">${m.text}</div>`:`<div class="cm"><span class="cm-n" style="color:${m.color}">${m.avatar}${m.name}:</span> ${m.text}</div>`).join('');
   msgs.scrollTop=msgs.scrollHeight;
 }
 
@@ -1040,7 +953,7 @@ window.sendChat=async function(){
   const text=inp.value.trim();if(!text||!gameState)return;
   inp.value='';
   const gs=JSON.parse(JSON.stringify(gameState));
-  const p=gs.players[myIndex];
+  const p=gs.players[myIndex];if(!p)return;
   if(!gs.chat)gs.chat=[];
   gs.chat.push({name:p.name,avatar:p.avatar,color:p.color,text:text.slice(0,60)});
   if(gs.chat.length>50)gs.chat.shift();
@@ -1052,15 +965,13 @@ window.chatKey=function(e){if(e.key==='Enter')sendChat();};
 // ── BOARD ─────────────────────────────────────────────────────────────────────
 function renderBoard(){
   const board=document.getElementById('board');board.innerHTML='';
-  const skin=BOARD_SKINS.find(s=>s.id===myProfile.skin)||BOARD_SKINS[0];
+  const skin=BOARD_SKINS.find(s=>s.id===profile.skin)||BOARD_SKINS[0];
   const grid=Array.from({length:11},()=>Array(11).fill(null));
   BOARD.forEach(c=>{const[r,col]=c.pos;grid[r-1][col-1]=c;});
-
   const center=document.createElement('div');
   center.className='cell center';
-  center.style.background=skin.bg;
+  if(skin.bg)center.style.background=skin.bg;
   center.innerHTML=`<div class="chat-area"><div class="chat-msgs" id="chatMsgs"></div><div class="chat-row"><input class="chat-inp" id="chatInp" placeholder="Чат..." maxlength="60" onkeydown="chatKey(event)"/><button class="chat-send" onclick="sendChat()">➤</button></div></div>`;
-
   for(let r=0;r<11;r++){
     for(let c=0;c<11;c++){
       if(r>=1&&r<=9&&c>=1&&c<=9){if(r===1&&c===1)board.appendChild(center);continue;}
@@ -1069,7 +980,7 @@ function renderBoard(){
       const el=document.createElement('div');
       el.className='cell'+(cell.type==='corner'?' corner':'');
       el.id='cell-'+cell.id;
-      el.style.background=skin.bg==='#111827'?'var(--card)':skin.bg+'dd';
+      if(skin.bg)el.style.background=skin.bg+'dd';
       const bar=cell.type==='property'?`<div class="cell-bar" style="background:${GC[cell.group]}"></div>`:'';
       el.innerHTML=`${bar}<div class="cell-icon">${cell.icon}</div><div class="cell-name">${cell.name}</div>${cell.price?`<div class="cell-price">₴${cell.price}</div>`:''}`;
       board.appendChild(el);
@@ -1115,24 +1026,19 @@ function showWinScreen(gs){
   const active=gs.players.filter(p=>!p.bankrupt);
   const winner=active[0]||gs.players.reduce((a,b)=>a.money>b.money?a:b);
   const won=winner.index===myIndex;
-  const pts=won?50:10;
   document.getElementById('winEmoji').textContent=winner.avatar;
   document.getElementById('winTitle').textContent=winner.name+' перемагає!';
   document.getElementById('winSub').textContent='Переможець Монополії України! 🇺🇦';
-  document.getElementById('ptsEarned').textContent=(won?'🏆 Перемога! ':'')+'+'+(pts)+' ⭐ очок';
+  document.getElementById('ptsEarned').textContent=(won?'🏆 Перемога! ':'')+' +'+(won?50:10)+' ⭐ очок';
   const sorted=[...gs.players].sort((a,b)=>b.money-a.money);
-  document.getElementById('endTable').innerHTML=sorted.map((p,i)=>`
-    <div class="et-row">
-      <span>${['🥇','🥈','🥉','4️⃣'][i]} ${p.avatar} ${p.name}${p.index===myIndex?' (Ви)':''}</span>
-      <span style="color:${i===0?'var(--gold)':'var(--text)'}">${p.bankrupt?'💀':'₴'+p.money.toLocaleString()}</span>
-    </div>`).join('');
+  document.getElementById('endTable').innerHTML=sorted.map((p,i)=>`<div class="et-row"><span>${['🥇','🥈','🥉','4️⃣'][i]} ${p.avatar} ${p.name}${p.index===myIndex?' (Ви)':''}</span><span style="color:${i===0?'var(--gold)':'var(--text)'}">${p.bankrupt?'💀':'₴'+p.money.toLocaleString()}</span></div>`).join('');
   showScreen('winScreen');
 }
 
 window.backToApp=function(){
   if(roomUnsub)roomUnsub();
-  if(roomCode)remove(ref(db,'rooms/'+roomCode+'/players/'+myUid));
-  roomCode=null;showScreen('appScreen');refreshProfileUI();loadRooms();
+  if(roomCode)remove(ref(db,'rooms/'+roomCode+'/players/'+myId));
+  roomCode=null;showScreen('appScreen');refreshUI();loadRooms();
 };
 
 // ── UTILS ─────────────────────────────────────────────────────────────────────
@@ -1144,4 +1050,4 @@ window.showScreen=function(id){
 if('serviceWorker'in navigator)navigator.serviceWorker.register('/monopoly/sw.js');
 </script>
 </body>
-</html>
+  </html>
