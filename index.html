@@ -441,13 +441,14 @@ select option{background:#1a2340;}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import{getDatabase,ref,set,get,onValue,update,remove}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import{getAuth,signInWithPopup,GoogleAuthProvider,signInAnonymously,onAuthStateChanged,signOut as fbSignOut}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
+import{getAuth,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signInAnonymously,onAuthStateChanged,signOut as fbSignOut}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  
 const FB={apiKey:"AIzaSyBQNVeXBCqQi5eKhfjAQTJivwKzT9gXT0k",authDomain:"monopoly-fc387.firebaseapp.com",databaseURL:"https://monopoly-fc387-default-rtdb.firebaseio.com",projectId:"monopoly-fc387",storageBucket:"monopoly-fc387.firebasestorage.app",messagingSenderId:"748860996691",appId:"1:748860996691:web:731de9e774cee122991aa6"};
 const fapp=initializeApp(FB);
 const db=getDatabase(fapp);
 const auth=getAuth(fapp);
-
+getRedirectResult(auth).catch(e=>console.log(e));
+  
 // ── CONSTANTS ──────────────────────────────────────────────────────────────────
 const AVATARS=['🚀','🦁','🐉','🌟','🎭','🦊','🐺','🦅','🔥','💎','🏆','👑','🎯','⚡','🌈','🦄','🐯','🦋','🎪','🌊','🦸','🤺','🧙','🦝'];
 const PC=['#e53935','#1e88e5','#43a047','#fb8c00'];
@@ -552,7 +553,7 @@ let selectedMax=4,roomCode=null,isHost=false,myIndex=-1,gameState=null,roomRef=n
 window.signInGoogle=async function(){
   try{
     const provider=new GoogleAuthProvider();
-    await signInWithPopup(auth,provider);
+    await signInWithRedirect(auth,provider);
   }catch(e){alert('Помилка входу: '+e.message);}
 };
 
