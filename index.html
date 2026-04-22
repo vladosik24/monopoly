@@ -552,15 +552,21 @@ let selectedMax=4,roomCode=null,isHost=false,myIndex=-1,gameState=null,roomRef=n
 // ── AUTH ──────────────────────────────────────────────────────────────────────
 window.signInGoogle=async function(){
   try{
-    const provider=new GoogleAuthProvider();
-    await signInWithRedirect(auth,provider);
-  }catch(e){alert('Помилка входу: '+e.message);}
+window.signInGoogle=function(){
+  const provider=new GoogleAuthProvider();
+  signInWithRedirect(auth,provider).catch(e=>{
+    console.error(e);
+    alert('Помилка: '+e.message);
+  });
 };
 
-window.signInAnon=async function(){
-  await signInAnonymously(auth);
+window.signInAnon=function(){
+  signInAnonymously(auth).catch(e=>{
+    console.error(e);
+    alert('Помилка анонімного входу: '+e.message);
+  });
 };
-
+    
 window.signOut=async function(){
   await fbSignOut(auth);
   showScreen('authScreen');
