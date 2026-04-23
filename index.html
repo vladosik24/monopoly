@@ -1502,8 +1502,16 @@ window.closeMortgage=()=>document.getElementById('mortgageOverlay').classList.re
 // ── CHAT ──────────────────────────────────────────────────────────────────
 function renderChat(gs){
   const msgs=document.getElementById('chatMsgs');if(!msgs)return;
-  const chat=(gs.chat||[]).concat((gs.log||[]).slice(0,10).map(t=>({sys:true,text:t})));
-  msgs.innerHTML=(gs.chat||[]).slice(-30).map(m=>m.sys?`<div class="cm sys">${m.text}</div>`:`<div class="cm"><span class="cm-n" style="color:${m.color}">${m.avatar}${m.name}:</span> ${m.text}</div>`).join('');
+  // Обєднуємо чат і лог дій
+  const chatItems=(gs.chat||[]).map(m=>({...m,isChat:true}));
+  const logItems=(gs.log||[]).slice(0,15).map(t=>({sys:true,text:t}));
+  // Лог знизу (новіший), чат зверху
+  const all=[...logItems.reverse(),...chatItems];
+  msgs.innerHTML=all.map(m=>
+    m.sys
+    ?`<div class="cm sys">📋 ${m.text}</div>`
+    :`<div class="cm"><span class="cm-n" style="color:${m.color}">${m.avatar} ${m.name}:</span> ${m.text}</div>`
+  ).join('');
   msgs.scrollTop=msgs.scrollHeight;
 }
 window.sendChat=async function(){
